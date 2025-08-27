@@ -172,6 +172,8 @@ class CommunityScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       time,
@@ -179,6 +181,8 @@ class CommunityScreen extends StatelessWidget {
                         color: Colors.grey[600],
                         fontSize: 12,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -194,6 +198,8 @@ class CommunityScreen extends StatelessWidget {
           Text(
             question,
             style: const TextStyle(fontSize: 14),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 12),
           Row(
@@ -249,6 +255,8 @@ class CommunityScreen extends StatelessWidget {
               fontSize: 14,
               color: AppTheme.primaryGreen,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 8),
           Text(
@@ -260,11 +268,15 @@ class CommunityScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Text(
-                expertName,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
+              Expanded(
+                child: Text(
+                  expertName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               if (isVerified) ...[
@@ -275,7 +287,7 @@ class CommunityScreen extends StatelessWidget {
                   size: 16,
                 ),
               ],
-              const Spacer(),
+              const SizedBox(width: 8),
               Text(
                 time,
                 style: TextStyle(

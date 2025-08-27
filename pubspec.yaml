@@ -41,6 +41,14 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^6.1.0
   flutter_animate: ^4.3.0
+  
+  # PDF and Documents
+  pdf: ^3.10.7
+  path_provider: ^2.1.1
+  
+  # Web scraping and notifications
+  html: ^0.15.4
+  flutter_local_notifications: ^17.2.2
 
 dev_dependencies:
   flutter_test:

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/farm_provider.dart';
-import '../providers/voice_assistant_provider.dart';
 import 'home_screen.dart';
 import 'farm_features_screen.dart';
 import 'knowledge_screen.dart';
 import 'community_screen.dart';
+import 'government_schemes_screen.dart';
 import 'profile_screen.dart';
 import '../widgets/voice_assistant_fab.dart';
 import '../utils/app_theme.dart';
@@ -24,6 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     const HomeScreen(),
     const FarmFeaturesScreen(),
     const KnowledgeScreen(),
+    const GovernmentSchemesScreen(),
     const CommunityScreen(),
     const ProfileScreen(),
   ];
@@ -32,6 +33,7 @@ class _MainScreenState extends State<MainScreen> {
     'Home',
     'My Farm',
     'Knowledge',
+    'Govt Schemes',
     'Community',
     'Profile',
   ];
@@ -89,13 +91,13 @@ class _MainScreenState extends State<MainScreen> {
               _currentIndex = index;
             });
           },
-          type: BottomNavigationBarType.fixed,
+          type: BottomNavigationBarType.shifting,
           backgroundColor: Colors.white,
           selectedItemColor: AppTheme.primaryGreen,
           unselectedItemColor: Colors.grey[600],
-          selectedFontSize: 12,
-          unselectedFontSize: 10,
-          iconSize: 24,
+          selectedFontSize: 10,
+          unselectedFontSize: 8,
+          iconSize: 20,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
@@ -111,6 +113,11 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.menu_book_outlined),
               activeIcon: Icon(Icons.menu_book),
               label: 'Knowledge',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_balance_outlined),
+              activeIcon: Icon(Icons.account_balance),
+              label: 'Govt Schemes',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.people_outline),
@@ -237,6 +244,8 @@ class _MainScreenState extends State<MainScreen> {
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -245,6 +254,8 @@ class _MainScreenState extends State<MainScreen> {
                     color: Colors.grey[600],
                     fontSize: 12,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -253,6 +264,8 @@ class _MainScreenState extends State<MainScreen> {
                     color: Colors.grey[500],
                     fontSize: 10,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
