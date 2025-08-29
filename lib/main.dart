@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'screens/main_screen.dart';
 import 'providers/farm_provider.dart';
 import 'providers/voice_assistant_provider.dart';
+import 'providers/enhanced_voice_assistant_provider.dart';
 import 'providers/weather_provider.dart';
 import 'utils/app_theme.dart';
 
@@ -19,6 +20,7 @@ class KisanVaaniApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => FarmProvider()),
         ChangeNotifierProvider(create: (_) => VoiceAssistantProvider()),
+        ChangeNotifierProvider(create: (_) => EnhancedVoiceAssistantProvider()),
         ChangeNotifierProvider(create: (_) => WeatherProvider()),
       ],
       child: MaterialApp(

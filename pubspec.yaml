@@ -13,11 +13,13 @@ dependencies:
     sdk: flutter
   
   # Voice Assistant
-  speech_to_text: ^7.0.0
+  speech_to_text: ^6.6.2
   flutter_tts: ^4.0.0
   
   # Networking & Data
   http: ^1.1.0
+  web_socket_channel: ^3.0.3
+  dio: ^5.4.0
   shared_preferences: ^2.2.2
   sqflite: ^2.3.0
    

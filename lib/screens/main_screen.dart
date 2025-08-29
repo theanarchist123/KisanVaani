@@ -3,11 +3,13 @@ import 'package:provider/provider.dart';
 import '../providers/farm_provider.dart';
 import '../providers/voice_assistant_provider.dart';
 import 'home_screen.dart';
+import 'enhanced_home_screen.dart';
 import 'farm_features_screen.dart';
 import 'knowledge_screen.dart';
 import 'community_screen.dart';
 import 'profile_screen.dart';
 import '../widgets/voice_assistant_fab.dart';
+import '../widgets/enhanced_voice_assistant_fab.dart';
 import '../utils/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
@@ -21,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 1; // Start with Farm Features as primary focus
 
   final List<Widget> _screens = [
-    const HomeScreen(),
+    const EnhancedHomeScreen(), // Use enhanced home screen with RAG integration
     const FarmFeaturesScreen(),
     const KnowledgeScreen(),
     const CommunityScreen(),
@@ -125,7 +127,7 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
       ),
-      floatingActionButton: const VoiceAssistantFAB(),
+      floatingActionButton: const EnhancedVoiceAssistantFAB(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
