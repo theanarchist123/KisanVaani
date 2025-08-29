@@ -28,11 +28,6 @@ class SubsidyTrackingScreen extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _refreshData(context),
-        backgroundColor: AppTheme.primaryGreen,
-        child: const Icon(Icons.refresh, color: Colors.white),
-      ),
     );
   }
 
@@ -222,7 +217,7 @@ class SubsidyTrackingScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        ...provider.subsidyBenefits.map((benefit) => _buildBenefitCard(benefit)).toList(),
+        ...provider.subsidyBenefits.map((benefit) => _buildBenefitCard(benefit)),
       ],
     );
   }
@@ -453,10 +448,6 @@ class SubsidyTrackingScreen extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
-  }
-
-  void _refreshData(BuildContext context) {
-    context.read<GovernmentSchemeProvider>().checkSubsidyStatus();
   }
 
   void _showFilterOptions(GovernmentSchemeProvider provider) {

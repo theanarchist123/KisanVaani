@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/app_theme.dart';
+import '../utils/layout_helpers.dart';
 
 class CommunityScreen extends StatelessWidget {
   const CommunityScreen({super.key});
@@ -7,15 +8,16 @@ class CommunityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
+      padding: LayoutHelpers.getScreenPadding(context),
+      child: LayoutHelpers.safeColumn(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 16,
         children: [
           // Voice Forum Section
           _buildSectionHeader('Voice Forum', Icons.record_voice_over),
-          const SizedBox(height: 12),
           
           _buildVoiceForumCard(
+            context,
             'Rajesh Kumar',
             'Tomato leaf curl virus problem, please suggest solutions?',
             '2 hours ago',
@@ -23,19 +25,18 @@ class CommunityScreen extends StatelessWidget {
           ),
           
           _buildVoiceForumCard(
+            context,
             'Sunita Devi',
             'Need information about new wheat varieties.',
             '5 hours ago',
             8,
           ),
           
-          const SizedBox(height: 24),
-          
           // Q&A Section
           _buildSectionHeader('Q&A', Icons.question_answer),
-          const SizedBox(height: 12),
           
           _buildQACard(
+            context,
             'Q: Treatment for brown spot disease in rice?',
             'A: Spray Propiconazole 25% EC...',
             'Dr. Anil Sharma',
@@ -44,6 +45,7 @@ class CommunityScreen extends StatelessWidget {
           ),
           
           _buildQACard(
+            context,
             'Q: How to make organic fertilizer?',
             'A: Mix cow dung, dry leaves and kitchen waste...',
             'Pramod Yadav',
@@ -51,13 +53,11 @@ class CommunityScreen extends StatelessWidget {
             false,
           ),
           
-          const SizedBox(height: 24),
-          
           // Expert Advice
           _buildSectionHeader('Expert Advice', Icons.person),
-          const SizedBox(height: 12),
           
           _buildExpertCard(
+            context,
             'Dr. Ram Prasad',
             'Agricultural Expert',
             'Crop disease and pest management',
@@ -65,19 +65,18 @@ class CommunityScreen extends StatelessWidget {
           ),
           
           _buildExpertCard(
+            context,
             'Prof. Sunita Agrawal',
             'Soil Science Expert',
             'Soil fertility and nutrition',
             'offline',
           ),
           
-          const SizedBox(height: 24),
-          
           // Local Groups
           _buildSectionHeader('Local Groups', Icons.groups),
-          const SizedBox(height: 12),
           
           _buildGroupCard(
+            context,
             'Sonipat Farmers Union',
             '1,245 members',
             'Community of farmers from Haryana',
@@ -85,13 +84,14 @@ class CommunityScreen extends StatelessWidget {
           ),
           
           _buildGroupCard(
+            context,
             'Organic Farming Group',
             '892 members',
             'For natural farming practices',
             false,
           ),
           
-          const SizedBox(height: 100),
+          const SizedBox(height: 80),
         ],
       ),
     );
@@ -126,63 +126,53 @@ class CommunityScreen extends StatelessWidget {
   }
 
   Widget _buildVoiceForumCard(
+    BuildContext context,
     String name,
     String question,
     String time,
     int replies,
   ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
+    return LayoutHelpers.responsiveCard(
+      padding: const EdgeInsets.all(12),
+      child: LayoutHelpers.safeColumn(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 8,
         children: [
-          Row(
+          LayoutHelpers.responsiveRow(
             children: [
               CircleAvatar(
-                radius: 20,
+                radius: 18,
                 backgroundColor: AppTheme.primaryGreen.withOpacity(0.1),
                 child: Text(
                   name[0],
                   style: const TextStyle(
                     color: AppTheme.primaryGreen,
                     fontWeight: FontWeight.bold,
+                    fontSize: 14,
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
-                child: Column(
+                child: LayoutHelpers.safeColumn(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 2,
                   children: [
-                    Text(
+                    LayoutHelpers.safeText(
                       name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 13,
                       ),
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    Text(
+                    LayoutHelpers.safeText(
                       time,
                       style: TextStyle(
                         color: Colors.grey[600],
-                        fontSize: 12,
+                        fontSize: 11,
                       ),
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -190,32 +180,32 @@ class CommunityScreen extends StatelessWidget {
               const Icon(
                 Icons.play_circle_outline,
                 color: AppTheme.primaryGreen,
-                size: 24,
+                size: 20,
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Text(
+          
+          LayoutHelpers.safeText(
             question,
-            style: const TextStyle(fontSize: 14),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 13),
+            maxLines: 2,
           ),
-          const SizedBox(height: 12),
-          Row(
+          
+          LayoutHelpers.responsiveRow(
             children: [
               Icon(
                 Icons.reply,
-                size: 16,
+                size: 14,
                 color: Colors.grey[600],
               ),
               const SizedBox(width: 4),
-              Text(
+              LayoutHelpers.safeText(
                 '$replies उत्तर',
                 style: TextStyle(
                   color: Colors.grey[600],
-                  fontSize: 12,
+                  fontSize: 11,
                 ),
+                maxLines: 1,
               ),
             ],
           ),
@@ -225,28 +215,18 @@ class CommunityScreen extends StatelessWidget {
   }
 
   Widget _buildQACard(
+    BuildContext context,
     String question,
     String answer,
     String expertName,
     String time,
     bool isVerified,
   ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
+    return LayoutHelpers.responsiveCard(
+      padding: const EdgeInsets.all(12),
+      child: LayoutHelpers.safeColumn(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 8,
         children: [
           Text(
             question,
@@ -303,80 +283,75 @@ class CommunityScreen extends StatelessWidget {
   }
 
   Widget _buildExpertCard(
+    BuildContext context,
     String name,
     String title,
     String specialization,
     String status,
   ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
+    return LayoutHelpers.responsiveCard(
+      padding: const EdgeInsets.all(12),
+      child: LayoutHelpers.responsiveRow(
         children: [
           CircleAvatar(
-            radius: 25,
+            radius: 22,
             backgroundColor: AppTheme.primaryGreen.withOpacity(0.1),
             child: Text(
               name[0],
               style: const TextStyle(
                 color: AppTheme.primaryGreen,
                 fontWeight: FontWeight.bold,
-                fontSize: 18,
+                fontSize: 16,
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Expanded(
-            child: Column(
+            child: LayoutHelpers.safeColumn(
               crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 3,
               children: [
-                Row(
+                LayoutHelpers.responsiveRow(
                   children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                    Flexible(
+                      child: LayoutHelpers.safeText(
+                        name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                        maxLines: 1,
                       ),
                     ),
                     const SizedBox(width: 4),
                     const Icon(
                       Icons.verified,
                       color: Colors.blue,
-                      size: 16,
+                      size: 14,
                     ),
                   ],
                 ),
-                Text(
+                LayoutHelpers.safeText(
                   title,
                   style: TextStyle(
                     color: Colors.grey[600],
-                    fontSize: 14,
+                    fontSize: 12,
                   ),
+                  maxLines: 1,
                 ),
-                Text(
+                LayoutHelpers.safeText(
                   specialization,
                   style: TextStyle(
                     color: Colors.grey[500],
-                    fontSize: 12,
+                    fontSize: 11,
                   ),
+                  maxLines: 2,
                 ),
               ],
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
             decoration: BoxDecoration(
               color: status == 'online' ? Colors.green : Colors.grey,
               borderRadius: BorderRadius.circular(12),
@@ -395,65 +370,58 @@ class CommunityScreen extends StatelessWidget {
   }
 
   Widget _buildGroupCard(
+    BuildContext context,
     String name,
     String members,
     String description,
     bool isJoined,
   ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
+    return LayoutHelpers.responsiveCard(
+      padding: const EdgeInsets.all(12),
+      child: LayoutHelpers.responsiveRow(
         children: [
           Container(
-            width: 50,
-            height: 50,
+            width: 45,
+            height: 45,
             decoration: BoxDecoration(
               color: AppTheme.primaryGreen.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(25),
+              borderRadius: BorderRadius.circular(22),
             ),
             child: const Icon(
               Icons.groups,
               color: AppTheme.primaryGreen,
-              size: 24,
+              size: 22,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Expanded(
-            child: Column(
+            child: LayoutHelpers.safeColumn(
               crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 3,
               children: [
-                Text(
+                LayoutHelpers.safeText(
                   name,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
+                  maxLines: 1,
                 ),
-                Text(
+                LayoutHelpers.safeText(
                   members,
                   style: TextStyle(
                     color: Colors.grey[600],
-                    fontSize: 14,
+                    fontSize: 12,
                   ),
+                  maxLines: 1,
                 ),
-                Text(
+                LayoutHelpers.safeText(
                   description,
                   style: TextStyle(
                     color: Colors.grey[500],
-                    fontSize: 12,
+                    fontSize: 11,
                   ),
+                  maxLines: 2,
                 ),
               ],
             ),
@@ -462,11 +430,12 @@ class CommunityScreen extends StatelessWidget {
             onPressed: () {},
             style: ElevatedButton.styleFrom(
               backgroundColor: isJoined ? Colors.grey : AppTheme.primaryGreen,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             ),
-            child: Text(
+            child: LayoutHelpers.safeText(
               isJoined ? 'छोड़ें' : 'जुड़ें',
-              style: const TextStyle(fontSize: 12),
+              style: const TextStyle(fontSize: 11, color: Colors.white),
+              maxLines: 1,
             ),
           ),
         ],

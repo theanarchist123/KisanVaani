@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../providers/farm_provider.dart';
 import '../utils/app_theme.dart';
+import '../utils/layout_helpers.dart';
+import '../services/i18n_service.dart';
+import '../widgets/i18n_widgets.dart';
 
 class FarmAnalyticsDashboard extends StatelessWidget {
   const FarmAnalyticsDashboard({super.key});
@@ -15,28 +18,28 @@ class FarmAnalyticsDashboard extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        return Column(
+        return LayoutHelpers.safeColumn(
           children: [
             // Analytics Cards Row
-            Row(
+            LayoutHelpers.responsiveRow(
               children: [
                 Expanded(
                   child: _buildAnalyticsCard(
-                    'अपेक्षित उत्पादन',
-                    '${farmProvider.currentFarm!.expectedYield.round()} किलो',
+                    context.t('totalExpenses'),
+                    context.formatCurrency(farmProvider.currentFarm!.expectedYield),
                     Icons.trending_up,
                     AppTheme.healthyGreen,
-                    '${((farmProvider.seasonProgress) * 100).round()}% पूर्ण',
+                    '${((farmProvider.seasonProgress) * 100).round()}%',
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildAnalyticsCard(
-                    'कुल निवेश',
-                    '₹${farmProvider.totalInvestment.round()}',
+                    context.t('totalIncome'),
+                    context.formatCurrency(farmProvider.totalInvestment),
                     Icons.account_balance_wallet,
                     AppTheme.accentOrange,
-                    'इस सीज़न में',
+                    context.t('profitLoss'),
                   ),
                 ),
               ],
@@ -44,27 +47,29 @@ class FarmAnalyticsDashboard extends StatelessWidget {
             
             const SizedBox(height: 12),
             
-            Row(
+            LayoutHelpers.responsiveRow(
               children: [
                 Expanded(
                   child: _buildAnalyticsCard(
-                    'अनुमानित लाभ',
-                    '₹${farmProvider.expectedProfit.round()}',
+                    context.t('profitLoss'),
+                    context.formatCurrency(farmProvider.expectedProfit),
                     Icons.monetization_on,
                     farmProvider.expectedProfit > 0 
                       ? AppTheme.healthyGreen 
                       : AppTheme.criticalRed,
-                    farmProvider.expectedProfit > 0 ? 'लाभ' : 'नुकसान',
+                    farmProvider.expectedProfit > 0 
+                      ? context.t('profitLoss')
+                      : context.t('profitLoss'),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildAnalyticsCard(
-                    'फसल स्वास्थ्य',
+                    context.t('cropHealthOverview'),
                     '${farmProvider.healthyCrops.length}/${farmProvider.currentFarm!.crops.length}',
                     Icons.health_and_safety,
                     _getOverallHealthColor(farmProvider),
-                    'स्वस्थ फसलें',
+                    context.t('healthy'),
                   ),
                 ),
               ],
@@ -73,12 +78,12 @@ class FarmAnalyticsDashboard extends StatelessWidget {
             const SizedBox(height: 16),
             
             // Expense Breakdown Chart
-            _buildExpenseChart(farmProvider),
+            _buildExpenseChart(context, farmProvider),
             
             const SizedBox(height: 16),
             
             // Crop Health Overview
-            _buildCropHealthOverview(farmProvider),
+            _buildCropHealthOverview(context, farmProvider),
           ],
         );
       },
@@ -162,7 +167,7 @@ class FarmAnalyticsDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildExpenseChart(FarmProvider farmProvider) {
+  Widget _buildExpenseChart(BuildContext context, FarmProvider farmProvider) {
     final expenses = farmProvider.expensesByCategory;
     if (expenses.isEmpty) {
       return const SizedBox.shrink();
@@ -202,16 +207,16 @@ class FarmAnalyticsDashboard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'खर्च विश्लेषण',
-            style: TextStyle(
+          Text(
+            context.t('expenseAnalysis'),
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: AppTheme.textDark,
             ),
           ),
           const SizedBox(height: 16),
-          Row(
+          LayoutHelpers.responsiveRow(
             children: [
               // Pie Chart
               Expanded(
@@ -238,7 +243,7 @@ class FarmAnalyticsDashboard extends StatelessWidget {
                   children: expenses.entries.map((entry) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 2),
-                      child: Row(
+                      child: LayoutHelpers.responsiveRow(
                         children: [
                           Container(
                             width: 12,
@@ -251,12 +256,12 @@ class FarmAnalyticsDashboard extends StatelessWidget {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              _getExpenseTypeHindi(entry.key),
+                              entry.key.replaceAll('_', ' ').toUpperCase(),
                               style: const TextStyle(fontSize: 12),
                             ),
                           ),
                           Text(
-                            '₹${entry.value.round()}',
+                            context.formatCurrency(entry.value),
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -275,7 +280,7 @@ class FarmAnalyticsDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildCropHealthOverview(FarmProvider farmProvider) {
+  Widget _buildCropHealthOverview(BuildContext context, FarmProvider farmProvider) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -292,9 +297,9 @@ class FarmAnalyticsDashboard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'फसल स्वास्थ्य अवलोकन',
-            style: TextStyle(
+          Text(
+            context.t('cropHealthOverview'),
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: AppTheme.textDark,
@@ -304,7 +309,7 @@ class FarmAnalyticsDashboard extends StatelessWidget {
           
           // Health Status Bars
           _buildHealthStatusBar(
-            'स्वस्थ',
+            context.t('healthy'),
             farmProvider.healthyCrops.length,
             farmProvider.currentFarm!.crops.length,
             AppTheme.healthyGreen,
@@ -313,7 +318,7 @@ class FarmAnalyticsDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           
           _buildHealthStatusBar(
-            'ध्यान चाहिए',
+            context.t('needsAttention'),
             farmProvider.cropsNeedingAttention.length,
             farmProvider.currentFarm!.crops.length,
             AppTheme.attentionOrange,
@@ -322,7 +327,7 @@ class FarmAnalyticsDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           
           _buildHealthStatusBar(
-            'गंभीर स्थिति',
+            context.t('critical'),
             farmProvider.criticalCrops.length,
             farmProvider.currentFarm!.crops.length,
             AppTheme.criticalRed,
@@ -343,7 +348,7 @@ class FarmAnalyticsDashboard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        LayoutHelpers.responsiveRow(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
@@ -393,25 +398,6 @@ class FarmAnalyticsDashboard extends StatelessWidget {
         return const Color(0xFF00BCD4);
       default:
         return Colors.grey;
-    }
-  }
-
-  String _getExpenseTypeHindi(String type) {
-    switch (type.toLowerCase()) {
-      case 'seeds':
-        return 'बीज';
-      case 'fertilizer':
-        return 'खाद';
-      case 'pesticide':
-        return 'दवाई';
-      case 'labor':
-        return 'मजदूरी';
-      case 'equipment':
-        return 'उपकरण';
-      case 'irrigation':
-        return 'सिंचाई';
-      default:
-        return type;
     }
   }
 

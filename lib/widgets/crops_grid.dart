@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/farm_provider.dart';
 import '../models/farm_models.dart';
 import '../utils/app_theme.dart';
+import '../utils/layout_helpers.dart';
+import '../widgets/i18n_widgets.dart';
 
 class CropsGrid extends StatelessWidget {
   const CropsGrid({super.key});
@@ -13,22 +15,39 @@ class CropsGrid extends StatelessWidget {
       builder: (context, farmProvider, child) {
         final farm = farmProvider.currentFarm;
         if (farm == null || farm.crops.isEmpty) {
-          return _buildEmptyState();
+          return _buildEmptyState(context);
         }
 
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 0.8,
-          ),
-          itemCount: farm.crops.length,
-          itemBuilder: (context, index) {
-            final crop = farm.crops[index];
-            return _buildCropCard(context, crop);
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            // Responsive grid based on screen size
+            int crossAxisCount = 2;
+            double childAspectRatio = 0.75; // Made taller to prevent overflow
+            
+            if (constraints.maxWidth > 600) {
+              crossAxisCount = 3;
+              childAspectRatio = 0.8; // Made taller
+            }
+            if (constraints.maxWidth > 900) {
+              crossAxisCount = 4;
+              childAspectRatio = 0.85; // Made taller
+            }
+
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: childAspectRatio,
+              ),
+              itemCount: farm.crops.length,
+              itemBuilder: (context, index) {
+                final crop = farm.crops[index];
+                return _buildCropCard(context, crop);
+              },
+            );
           },
         );
       },
@@ -40,151 +59,160 @@ class CropsGrid extends StatelessWidget {
     
     return GestureDetector(
       onTap: () => _showCropDetails(context, crop),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.all(16),
+      child: LayoutHelpers.safeContainer(
+        padding: const EdgeInsets.all(8), // Reduced padding from 12 to 8
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: healthColor.withOpacity(0.3), width: 2),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: healthColor.withOpacity(0.3), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: healthColor.withOpacity(0.1),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Column(
+        child: LayoutHelpers.safeColumn(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Health Status Indicator & Stage
-            Row(
+            LayoutHelpers.responsiveRow(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: healthColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: healthColor,
-                          borderRadius: BorderRadius.circular(4),
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: healthColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: healthColor,
+                            borderRadius: BorderRadius.circular(3),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        _getHealthStatusEnglish(crop.healthStatus),
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: healthColor,
+                        const SizedBox(width: 3),
+                        LayoutHelpers.safeText(
+                          _getHealthStatusEnglish(crop.healthStatus),
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: healthColor,
+                          ),
+                          maxLines: 1,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Text(
                   crop.stageIcon,
-                  style: const TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 18),
                 ),
               ],
             ),
             
-            const SizedBox(height: 12),
+            const SizedBox(height: 6), // Reduced from 8
             
             // Crop Image Placeholder
             Container(
               width: double.infinity,
-              height: 60,
+              height: 40, // Reduced from 50
               decoration: BoxDecoration(
                 color: AppTheme.primaryGreen.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Center(
                 child: Text(
                   _getCropEmoji(crop.cropName),
-                  style: const TextStyle(fontSize: 32),
+                  style: const TextStyle(fontSize: 24), // Reduced from 28
                 ),
               ),
             ),
             
-            const SizedBox(height: 12),
+            const SizedBox(height: 6), // Reduced from 8
             
             // Crop Name
-            Text(
+            LayoutHelpers.safeText(
               crop.cropNameHindi,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.textDark,
               ),
+              maxLines: 1,
             ),
             
-            Text(
+            LayoutHelpers.safeText(
               crop.variety,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 color: Colors.grey[600],
               ),
+              maxLines: 1,
             ),
             
-            const SizedBox(height: 8),
+            const SizedBox(height: 4), // Reduced from 6
             
             // Growth Stage
-            Text(
+            LayoutHelpers.safeText(
               _getStageEnglish(crop.currentStage),
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 10, // Reduced from 11
                 fontWeight: FontWeight.w500,
                 color: AppTheme.primaryGreen,
               ),
+              maxLines: 1,
             ),
             
-            const SizedBox(height: 4),
+            const SizedBox(height: 3), // Reduced from 4
             
             // Days to Harvest
-            Row(
+            LayoutHelpers.responsiveRow(
               children: [
                 Icon(
                   Icons.schedule,
-                  size: 14,
+                  size: 12,
                   color: Colors.grey[600],
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  '${crop.daysToHarvest} days left',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
+                const SizedBox(width: 3),
+                Flexible(
+                  child: LayoutHelpers.safeText(
+                    '${crop.daysToHarvest} ${context.t('daysLeft')}',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey[600],
+                    ),
+                    maxLines: 1,
                   ),
                 ),
               ],
             ),
             
-            const SizedBox(height: 8),
+            const SizedBox(height: 4), // Reduced from 6
             
             // Area
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2), // Reduced padding
               decoration: BoxDecoration(
                 color: AppTheme.backgroundLight,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(6),
               ),
-              child: Text(
-                '${crop.areaAcres} एकड़',
+              child: LayoutHelpers.safeText(
+                '${crop.areaAcres} ${context.t('acres')}',
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 9, // Reduced from 10
                   fontWeight: FontWeight.w500,
                   color: AppTheme.textDark,
                 ),
+                maxLines: 1,
               ),
             ),
           ],
@@ -193,7 +221,7 @@ class CropsGrid extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
@@ -215,9 +243,9 @@ class CropsGrid extends StatelessWidget {
             color: AppTheme.primaryGreen,
           ),
           const SizedBox(height: 16),
-          const Text(
-            'No crops found',
-            style: TextStyle(
+          Text(
+            'No Crops Found',
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppTheme.textDark,
@@ -225,7 +253,7 @@ class CropsGrid extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Add your first crop',
+            'Add First Crop',
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey[600],
@@ -234,7 +262,7 @@ class CropsGrid extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {},
-            child: const Text('Add Crop'),
+            child: Text('Add Crop'),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/government_scheme_models.dart';
 import '../utils/app_theme.dart';
+import '../widgets/i18n_widgets.dart';
 
 class SchemeCard extends StatelessWidget {
   final GovernmentScheme scheme;
@@ -41,7 +42,7 @@ class SchemeCard extends StatelessWidget {
               const SizedBox(height: 12),
               _buildDescription(),
               const SizedBox(height: 12),
-              _buildBenefitInfo(),
+              _buildBenefitInfo(context),
               const SizedBox(height: 16),
               _buildActionButtons(context),
             ],
@@ -101,7 +102,7 @@ class SchemeCard extends StatelessWidget {
                 ),
                 child: Text(
                   scheme.category,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: AppTheme.primaryGreen,
@@ -158,7 +159,7 @@ class SchemeCard extends StatelessWidget {
     );
   }
 
-  Widget _buildBenefitInfo() {
+  Widget _buildBenefitInfo(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -229,10 +230,10 @@ class SchemeCard extends StatelessWidget {
           child: OutlinedButton.icon(
             onPressed: onTap,
             icon: const Icon(Icons.info_outline, size: 18),
-            label: const Text('Details'),
+            label: I18nText('details'),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppTheme.primaryGreen,
-              side: BorderSide(color: AppTheme.primaryGreen),
+              side: const BorderSide(color: AppTheme.primaryGreen),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -245,7 +246,7 @@ class SchemeCard extends StatelessWidget {
           child: ElevatedButton.icon(
             onPressed: onApply,
             icon: const Icon(Icons.assignment, size: 18),
-            label: const Text('Apply'),
+            label: I18nText('apply'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryGreen,
               foregroundColor: Colors.white,

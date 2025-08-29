@@ -1,67 +1,40 @@
 import 'package:flutter/material.dart';
 
-/// A collection of layout helper utilities to prevent overflow issues
 class LayoutHelpers {
-  /// Wraps a widget with safe constraints to prevent overflow
-  static Widget safeContainer({
-    required Widget child,
-    EdgeInsetsGeometry? padding,
-    EdgeInsetsGeometry? margin,
-    BoxDecoration? decoration,
-    double? width,
-    double? height,
-    AlignmentGeometry? alignment,
-  }) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Container(
-          padding: padding,
-          margin: margin,
-          decoration: decoration,
-          width: width != null ? width.clamp(0.0, constraints.maxWidth) : null,
-          height: height != null ? height.clamp(0.0, constraints.maxHeight) : null,
-          alignment: alignment,
-          child: child,
-        );
-      },
-    );
+  /// Get appropriate padding based on screen size
+  static EdgeInsets getScreenPadding(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth < 600) {
+      return const EdgeInsets.all(8.0);  // Mobile
+    } else if (screenWidth < 1024) {
+      return const EdgeInsets.all(16.0); // Tablet
+    } else {
+      return const EdgeInsets.all(24.0); // Desktop
+    }
   }
 
-  /// Creates a responsive Row that wraps to avoid overflow
-  static Widget responsiveRow({
-    required List<Widget> children,
-    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
-    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
-    MainAxisSize mainAxisSize = MainAxisSize.max,
-    TextDirection? textDirection,
-    VerticalDirection verticalDirection = VerticalDirection.down,
-    TextBaseline? textBaseline,
-  }) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // If screen is narrow, use Column instead of Row
-        if (constraints.maxWidth < 400) {
-          return Column(
-            mainAxisAlignment: mainAxisAlignment,
-            crossAxisAlignment: crossAxisAlignment,
-            mainAxisSize: mainAxisSize,
-            textDirection: textDirection,
-            verticalDirection: verticalDirection,
-            textBaseline: textBaseline,
-            children: children,
-          );
-        }
-        return Row(
-          mainAxisAlignment: mainAxisAlignment,
-          crossAxisAlignment: crossAxisAlignment,
-          mainAxisSize: mainAxisSize,
-          textDirection: textDirection,
-          verticalDirection: verticalDirection,
-          textBaseline: textBaseline,
-          children: children.map((child) => Flexible(child: child)).toList(),
-        );
-      },
-    );
+  /// Get cross axis count for grid based on screen size
+  static int getCrossAxisCount(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth < 600) {
+      return 2; // Mobile
+    } else if (screenWidth < 1024) {
+      return 3; // Tablet
+    } else {
+      return 4; // Desktop
+    }
+  }
+
+  /// Get responsive font size
+  static double responsiveFontSize(BuildContext context, double baseSize) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth < 600) {
+      return baseSize * 0.9; // Smaller on mobile
+    } else if (screenWidth < 1024) {
+      return baseSize; // Base size on tablet
+    } else {
+      return baseSize * 1.1; // Larger on desktop
+    }
   }
 
   /// Creates a Text widget with safe overflow handling
@@ -69,119 +42,73 @@ class LayoutHelpers {
     String text, {
     TextStyle? style,
     int? maxLines,
-    TextOverflow overflow = TextOverflow.ellipsis,
+    TextOverflow? overflow,
     TextAlign? textAlign,
-    TextDirection? textDirection,
-    double? textScaleFactor,
-    bool softWrap = true,
   }) {
     return Text(
       text,
       style: style,
-      maxLines: maxLines,
-      overflow: overflow,
+      maxLines: maxLines ?? 2,
+      overflow: overflow ?? TextOverflow.ellipsis,
       textAlign: textAlign,
-      textDirection: textDirection,
-      textScaleFactor: textScaleFactor,
-      softWrap: softWrap,
     );
   }
 
-  /// Creates a Container with responsive width
-  static Widget responsiveContainer({
-    required Widget child,
-    EdgeInsetsGeometry? padding,
-    EdgeInsetsGeometry? margin,
-    BoxDecoration? decoration,
-    double? minWidth,
-    double? maxWidth,
-    double? height,
-    AlignmentGeometry? alignment,
+  /// Creates a Column with safe overflow handling and spacing
+  static Widget safeColumn({
+    required List<Widget> children,
+    CrossAxisAlignment? crossAxisAlignment,
+    MainAxisAlignment? mainAxisAlignment,
+    MainAxisSize? mainAxisSize,
+    double? spacing,
+  }) {
+    List<Widget> spacedChildren = children;
+    if (spacing != null && spacing > 0) {
+      spacedChildren = [];
+      for (int i = 0; i < children.length; i++) {
+        spacedChildren.add(children[i]);
+        if (i < children.length - 1) {
+          spacedChildren.add(SizedBox(height: spacing));
+        }
+      }
+    }
+    
+    return Column(
+      crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.start,
+      mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
+      mainAxisSize: mainAxisSize ?? MainAxisSize.min,
+      children: spacedChildren,
+    );
+  }
+
+  /// Creates a Row with responsive behavior
+  static Widget responsiveRow({
+    required List<Widget> children,
+    MainAxisAlignment? mainAxisAlignment,
+    CrossAxisAlignment? crossAxisAlignment,
+    MainAxisSize? mainAxisSize,
+    bool wrapOnSmallScreen = true,
   }) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        double containerWidth = constraints.maxWidth;
-        
-        if (minWidth != null && containerWidth < minWidth) {
-          containerWidth = minWidth;
+        if (wrapOnSmallScreen && constraints.maxWidth < 600) {
+          return Wrap(
+            children: children,
+            spacing: 8.0,
+            runSpacing: 8.0,
+          );
         }
-        if (maxWidth != null && containerWidth > maxWidth) {
-          containerWidth = maxWidth;
-        }
-
-        return Container(
-          width: containerWidth,
-          height: height,
-          padding: padding,
-          margin: margin,
-          decoration: decoration,
-          alignment: alignment,
-          child: child,
+        return Row(
+          mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
+          crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
+          mainAxisSize: mainAxisSize ?? MainAxisSize.max,
+          children: children,
         );
       },
     );
   }
 
-  /// Creates a ListView with proper overflow handling
-  static Widget safeListView({
-    required List<Widget> children,
-    Axis scrollDirection = Axis.vertical,
-    bool reverse = false,
-    ScrollController? controller,
-    bool? primary,
-    ScrollPhysics? physics,
-    bool shrinkWrap = false,
-    EdgeInsetsGeometry? padding,
-  }) {
-    return ListView(
-      scrollDirection: scrollDirection,
-      reverse: reverse,
-      controller: controller,
-      primary: primary,
-      physics: physics ?? const BouncingScrollPhysics(),
-      shrinkWrap: shrinkWrap,
-      padding: padding,
-      children: children,
-    );
-  }
-
-  /// Creates a Column with safe overflow handling
-  static Widget safeColumn({
-    required List<Widget> children,
-    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
-    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
-    MainAxisSize mainAxisSize = MainAxisSize.max,
-    TextDirection? textDirection,
-    VerticalDirection verticalDirection = VerticalDirection.down,
-    TextBaseline? textBaseline,
-    bool scrollable = false,
-  }) {
-    if (scrollable) {
-      return SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: mainAxisAlignment,
-          crossAxisAlignment: crossAxisAlignment,
-          mainAxisSize: mainAxisSize,
-          textDirection: textDirection,
-          verticalDirection: verticalDirection,
-          textBaseline: textBaseline,
-          children: children,
-        ),
-      );
-    }
-
-    return Column(
-      mainAxisAlignment: mainAxisAlignment,
-      crossAxisAlignment: crossAxisAlignment,
-      mainAxisSize: mainAxisSize,
-      textDirection: textDirection,
-      verticalDirection: verticalDirection,
-      textBaseline: textBaseline,
-      children: children,
-    );
-  }
-
-  /// Creates a Card with responsive width
+  /// Creates a Card with responsive width and padding
   static Widget responsiveCard({
     required Widget child,
     Color? color,
@@ -189,19 +116,21 @@ class LayoutHelpers {
     ShapeBorder? shape,
     bool borderOnForeground = true,
     EdgeInsetsGeometry? margin,
+    EdgeInsetsGeometry? padding,
     Clip? clipBehavior,
     bool semanticContainer = true,
     double? maxWidth,
   }) {
+    Widget cardChild = child;
+    if (padding != null) {
+      cardChild = Padding(padding: padding, child: child);
+    }
+    
     return LayoutBuilder(
       builder: (context, constraints) {
-        double cardWidth = constraints.maxWidth;
-        if (maxWidth != null && cardWidth > maxWidth) {
-          cardWidth = maxWidth;
-        }
-
-        return SizedBox(
-          width: cardWidth,
+        final cardWidth = maxWidth ?? constraints.maxWidth;
+        return Container(
+          width: cardWidth > constraints.maxWidth ? constraints.maxWidth : cardWidth,
           child: Card(
             color: color,
             elevation: elevation,
@@ -210,48 +139,53 @@ class LayoutHelpers {
             margin: margin,
             clipBehavior: clipBehavior,
             semanticContainer: semanticContainer,
-            child: child,
+            child: cardChild,
           ),
         );
       },
     );
   }
 
-  /// Creates a responsive grid
+  /// Creates a responsive grid delegate
+  static SliverGridDelegate responsiveGridDelegate(BuildContext context, {
+    double? childAspectRatio,
+    double? crossAxisSpacing,
+    double? mainAxisSpacing,
+  }) {
+    final crossAxisCount = getCrossAxisCount(context);
+    return SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: crossAxisCount,
+      childAspectRatio: childAspectRatio ?? 1.0,
+      crossAxisSpacing: crossAxisSpacing ?? 8.0,
+      mainAxisSpacing: mainAxisSpacing ?? 8.0,
+    );
+  }
+
+  /// Creates a Grid with responsive behavior
   static Widget responsiveGrid({
     required List<Widget> children,
-    int? crossAxisCount,
-    double mainAxisSpacing = 0.0,
-    double crossAxisSpacing = 0.0,
-    double childAspectRatio = 1.0,
-    EdgeInsetsGeometry? padding,
+    double? childAspectRatio,
+    double? crossAxisSpacing,
+    double? mainAxisSpacing,
     ScrollPhysics? physics,
-    bool shrinkWrap = false,
+    bool shrinkWrap = true,
   }) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        int columns = crossAxisCount ?? 
-          (constraints.maxWidth > 600 ? 3 : 
-           constraints.maxWidth > 400 ? 2 : 1);
-
-        return GridView.builder(
-          padding: padding,
-          physics: physics ?? const NeverScrollableScrollPhysics(),
+        return GridView.count(
+          crossAxisCount: getCrossAxisCount(context),
+          childAspectRatio: childAspectRatio ?? 1.0,
+          crossAxisSpacing: crossAxisSpacing ?? 8.0,
+          mainAxisSpacing: mainAxisSpacing ?? 8.0,
+          physics: physics,
           shrinkWrap: shrinkWrap,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: columns,
-            mainAxisSpacing: mainAxisSpacing,
-            crossAxisSpacing: crossAxisSpacing,
-            childAspectRatio: childAspectRatio,
-          ),
-          itemCount: children.length,
-          itemBuilder: (context, index) => children[index],
+          children: children,
         );
       },
     );
   }
 
-  /// Creates a Wrap widget for overflow-safe layouts
+  /// Creates a Wrap with safe spacing
   static Widget safeWrap({
     required List<Widget> children,
     Axis direction = Axis.horizontal,
@@ -262,6 +196,7 @@ class LayoutHelpers {
     WrapCrossAlignment crossAxisAlignment = WrapCrossAlignment.start,
     TextDirection? textDirection,
     VerticalDirection verticalDirection = VerticalDirection.down,
+    Clip clipBehavior = Clip.none,
   }) {
     return Wrap(
       direction: direction,
@@ -272,100 +207,58 @@ class LayoutHelpers {
       crossAxisAlignment: crossAxisAlignment,
       textDirection: textDirection,
       verticalDirection: verticalDirection,
+      clipBehavior: clipBehavior,
       children: children,
     );
   }
 
-  /// Calculates responsive font size based on screen width
-  static double responsiveFontSize(BuildContext context, double baseSize) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double scaleFactor = screenWidth / 375.0; // Base width (iPhone SE)
-    return (baseSize * scaleFactor).clamp(baseSize * 0.8, baseSize * 1.3);
-  }
-
-  /// Gets responsive padding based on screen size
-  static EdgeInsets responsivePadding(BuildContext context, {
-    double base = 16.0,
-    double? horizontal,
-    double? vertical,
-  }) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double factor = screenWidth > 600 ? 1.2 : 
-                   screenWidth > 400 ? 1.0 : 0.8;
-    
-    return EdgeInsets.symmetric(
-      horizontal: (horizontal ?? base) * factor,
-      vertical: (vertical ?? base) * factor,
-    );
-  }
-}
-
-/// Extension on Widget for easy overflow prevention
-extension LayoutExtensions on Widget {
-  /// Wraps the widget with Expanded to prevent overflow in Flex layouts
-  Widget expanded({int flex = 1}) => Expanded(flex: flex, child: this);
-
-  /// Wraps the widget with Flexible to allow it to shrink in Flex layouts
-  Widget flexible({int flex = 1, FlexFit fit = FlexFit.loose}) => 
-    Flexible(flex: flex, fit: fit, child: this);
-
-  /// Wraps the widget with SingleChildScrollView for vertical scrolling
-  Widget scrollable({
-    ScrollPhysics? physics,
+  /// Safe container with responsive constraints
+  static Widget safeContainer({
+    required Widget child,
+    double? maxWidth,
+    double? maxHeight,
     EdgeInsetsGeometry? padding,
-  }) => SingleChildScrollView(
-    physics: physics ?? const BouncingScrollPhysics(),
-    padding: padding,
-    child: this,
-  );
-
-  /// Wraps the widget with SafeArea
-  Widget safeArea({
-    bool left = true,
-    bool top = true,
-    bool right = true,
-    bool bottom = true,
-  }) => SafeArea(
-    left: left,
-    top: top,
-    right: right,
-    bottom: bottom,
-    child: this,
-  );
-
-  /// Adds responsive margins
-  Widget responsiveMargin(BuildContext context, {
-    double base = 8.0,
-    double? horizontal,
-    double? vertical,
+    EdgeInsetsGeometry? margin,
+    Color? color,
+    Decoration? decoration,
   }) {
-    final padding = LayoutHelpers.responsivePadding(
-      context,
-      base: base,
-      horizontal: horizontal,
-      vertical: vertical,
-    );
-    return Container(
-      margin: padding,
-      child: this,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          width: maxWidth != null 
+            ? (maxWidth! > constraints.maxWidth ? constraints.maxWidth : maxWidth)
+            : null,
+          height: maxHeight != null 
+            ? (maxHeight! > constraints.maxHeight ? constraints.maxHeight : maxHeight)
+            : null,
+          padding: padding,
+          margin: margin,
+          color: color,
+          decoration: decoration,
+          child: child,
+        );
+      },
     );
   }
 
-  /// Adds responsive padding
-  Widget responsivePadding(BuildContext context, {
-    double base = 16.0,
-    double? horizontal,
-    double? vertical,
+  /// Create responsive container (alias for safeContainer)
+  static Widget responsiveContainer({
+    required Widget child,
+    double? maxWidth,
+    double? maxHeight,
+    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? margin,
+    Color? color,
+    Decoration? decoration,
   }) {
-    final padding = LayoutHelpers.responsivePadding(
-      context,
-      base: base,
-      horizontal: horizontal,
-      vertical: vertical,
-    );
-    return Padding(
+    return safeContainer(
+      child: child,
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
       padding: padding,
-      child: this,
+      margin: margin,
+      color: color,
+      decoration: decoration,
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/farm_provider.dart';
+import '../providers/hybrid_translation_provider.dart';
+import '../utils/translation_utils.dart';
 import 'home_screen.dart';
 import 'farm_features_screen.dart';
 import 'knowledge_screen.dart';
@@ -29,14 +31,24 @@ class _MainScreenState extends State<MainScreen> {
     const ProfileScreen(),
   ];
 
-  final List<String> _titles = [
-    'Home',
-    'My Farm',
-    'Knowledge',
-    'Govt Schemes',
-    'Community',
-    'Profile',
-  ];
+  String _getScreenTitleKey(int index) {
+    switch (index) {
+      case 0:
+        return 'home';
+      case 1:
+        return 'farm_features';
+      case 2:
+        return 'knowledge';
+      case 3:
+        return 'government_schemes';
+      case 4:
+        return 'community';
+      case 5:
+        return 'profile';
+      default:
+        return 'app_name';
+    }
+  }
 
   @override
   void initState() {
@@ -52,8 +64,8 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: Text(
-          _titles[_currentIndex],
+        title: TranslatedText(
+          _getScreenTitleKey(_currentIndex),
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 22,
@@ -64,6 +76,36 @@ class _MainScreenState extends State<MainScreen> {
         elevation: 0,
         centerTitle: true,
         actions: [
+          Consumer<HybridTranslationProvider>(
+            builder: (context, provider, child) {
+              return PopupMenuButton<String>(
+                icon: const Icon(Icons.language, size: 28),
+                onSelected: (String languageCode) {
+                  provider.changeLanguage(languageCode);
+                },
+                itemBuilder: (BuildContext context) {
+                  return HybridTranslationProvider.supportedLanguages.entries.map((entry) {
+                    return PopupMenuItem<String>(
+                      value: entry.key,
+                      child: Row(
+                        children: [
+                          if (provider.currentLanguage == entry.key)
+                            Icon(
+                              Icons.check,
+                              color: AppTheme.primaryGreen,
+                              size: 18,
+                            ),
+                          if (provider.currentLanguage == entry.key)
+                            const SizedBox(width: 8),
+                          Text(entry.value),
+                        ],
+                      ),
+                    );
+                  }).toList();
+                },
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.notifications_outlined, size: 28),
             onPressed: () => _showNotifications(context),
@@ -74,6 +116,7 @@ class _MainScreenState extends State<MainScreen> {
         index: _currentIndex,
         children: _screens,
       ),
+      floatingActionButton: const VoiceAssistantFAB(),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -98,42 +141,40 @@ class _MainScreenState extends State<MainScreen> {
           selectedFontSize: 10,
           unselectedFontSize: 8,
           iconSize: 20,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Home',
+              icon: const Icon(Icons.home_outlined),
+              activeIcon: const Icon(Icons.home),
+              label: _getTranslatedLabel(context, 'home'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.agriculture_outlined),
-              activeIcon: Icon(Icons.agriculture),
-              label: 'My Farm',
+              icon: const Icon(Icons.agriculture_outlined),
+              activeIcon: const Icon(Icons.agriculture),
+              label: _getTranslatedLabel(context, 'farm_features'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.menu_book_outlined),
-              activeIcon: Icon(Icons.menu_book),
-              label: 'Knowledge',
+              icon: const Icon(Icons.menu_book_outlined),
+              activeIcon: const Icon(Icons.menu_book),
+              label: _getTranslatedLabel(context, 'knowledge'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance_outlined),
-              activeIcon: Icon(Icons.account_balance),
-              label: 'Govt Schemes',
+              icon: const Icon(Icons.account_balance_outlined),
+              activeIcon: const Icon(Icons.account_balance),
+              label: _getTranslatedLabel(context, 'government_schemes'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.people_outline),
-              activeIcon: Icon(Icons.people),
-              label: 'Community',
+              icon: const Icon(Icons.people_outline),
+              activeIcon: const Icon(Icons.people),
+              label: _getTranslatedLabel(context, 'community'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'Profile',
+              icon: const Icon(Icons.person_outline),
+              activeIcon: const Icon(Icons.person),
+              label: _getTranslatedLabel(context, 'profile'),
             ),
           ],
         ),
       ),
-      floatingActionButton: const VoiceAssistantFAB(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -161,8 +202,8 @@ class _MainScreenState extends State<MainScreen> {
             ),
             const Padding(
               padding: EdgeInsets.all(16),
-              child: Text(
-                'Notifications',
+              child: TranslatedText(
+                'notifications',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -175,25 +216,25 @@ class _MainScreenState extends State<MainScreen> {
                 children: [
                   _buildNotificationTile(
                     '🌧️',
-                    'Weather Alert',
+                    _getTranslatedLabel(context, 'weather_alert'),
                     'Rain expected tomorrow. Protect your crops.',
                     '2 hours ago',
                   ),
                   _buildNotificationTile(
                     '🌾',
-                    'Crop Update',
+                    _getTranslatedLabel(context, 'crop_update'),
                     'Your tomatoes are ready to flower. Apply NPK fertilizer.',
                     '5 hours ago',
                   ),
                   _buildNotificationTile(
                     '💰',
-                    'Market Prices',
+                    _getTranslatedLabel(context, 'market_prices'),
                     'Tomato prices increased to ₹25 per kg.',
                     '1 day ago',
                   ),
                   _buildNotificationTile(
                     '🚨',
-                    'Warning',
+                    _getTranslatedLabel(context, 'warning'),
                     'Water shortage detected in wheat crops.',
                     '2 days ago',
                   ),
@@ -248,7 +289,7 @@ class _MainScreenState extends State<MainScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
-                Text(
+                DynamicTranslatedText(
                   subtitle,
                   style: TextStyle(
                     color: Colors.grey[600],
@@ -258,7 +299,7 @@ class _MainScreenState extends State<MainScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
-                Text(
+                DynamicTranslatedText(
                   time,
                   style: TextStyle(
                     color: Colors.grey[500],
@@ -273,5 +314,15 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
     );
+  }
+
+  /// Safe helper method to get translated labels for BottomNavigationBar
+  String _getTranslatedLabel(BuildContext context, String key) {
+    try {
+      return context.tr(key);
+    } catch (e) {
+      // Fallback to key if translation fails
+      return key;
+    }
   }
 }

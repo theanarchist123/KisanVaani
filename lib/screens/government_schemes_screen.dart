@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/government_scheme_provider.dart';
 import '../models/government_scheme_models.dart';
-import '../widgets/voice_input_widget.dart';
 import '../widgets/scheme_card.dart';
 import '../widgets/application_status_card.dart';
+import '../widgets/i18n_widgets.dart';
 import '../utils/app_theme.dart';
 import 'scheme_details_screen.dart';
 import 'application_form_screen.dart';
@@ -40,8 +40,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: const Text(
-          'Government Schemes',
+        title: const I18nText('govtSchemes',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -84,22 +83,6 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
           _buildBenefitsTab(),
           _buildUpdatesTab(),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showVoiceAssistant,
-        backgroundColor: AppTheme.primaryGreen,
-        icon: Consumer<GovernmentSchemeProvider>(
-          builder: (context, provider, child) {
-            return Icon(
-              provider.isListening ? Icons.mic : Icons.mic_none,
-              color: Colors.white,
-            );
-          },
-        ),
-        label: const Text(
-          'Voice Assistant',
-          style: TextStyle(color: Colors.white),
-        ),
       ),
     );
   }
@@ -245,7 +228,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: AppTheme.primaryGreen,
@@ -354,7 +337,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
           scheme: scheme,
           onTap: () => _showSchemeDetails(scheme),
           onApply: () => _applyForScheme(scheme),
-        )).toList(),
+        )),
       ],
     );
   }
@@ -429,15 +412,6 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
           ),
         ],
       ),
-    );
-  }
-
-  void _showVoiceAssistant() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const VoiceInputWidget(),
     );
   }
 

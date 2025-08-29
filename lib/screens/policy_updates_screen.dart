@@ -28,11 +28,6 @@ class PolicyUpdatesScreen extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _refreshUpdates(context),
-        backgroundColor: AppTheme.primaryGreen,
-        child: const Icon(Icons.refresh, color: Colors.white),
-      ),
     );
   }
 
@@ -227,7 +222,7 @@ class PolicyUpdatesScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        ...provider.policyUpdates.map((update) => _buildUpdateCard(update)).toList(),
+        ...provider.policyUpdates.map((update) => _buildUpdateCard(update)),
       ],
     );
   }
@@ -417,7 +412,7 @@ class PolicyUpdatesScreen extends StatelessWidget {
             label: const Text('Read More'),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppTheme.primaryGreen,
-              side: BorderSide(color: AppTheme.primaryGreen),
+              side: const BorderSide(color: AppTheme.primaryGreen),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

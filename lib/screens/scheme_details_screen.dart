@@ -55,15 +55,6 @@ class SchemeDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _applyForScheme(context),
-        backgroundColor: AppTheme.primaryGreen,
-        icon: const Icon(Icons.assignment, color: Colors.white),
-        label: const Text(
-          'Apply Now',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
     );
   }
 
@@ -283,7 +274,7 @@ class SchemeDetailsScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(top: 2),
                   width: 6,
                   height: 6,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppTheme.primaryGreen,
                     shape: BoxShape.circle,
                   ),
@@ -467,7 +458,7 @@ class SchemeDetailsScreen extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: AppTheme.primaryGreen,
@@ -546,16 +537,6 @@ class SchemeDetailsScreen extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Sharing ${scheme.name}...'),
-      ),
-    );
-  }
-
-  void _applyForScheme(BuildContext context) {
-    context.read<GovernmentSchemeProvider>().selectScheme(scheme);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ApplicationFormScreen(scheme: scheme),
       ),
     );
   }

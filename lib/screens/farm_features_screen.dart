@@ -8,6 +8,7 @@ import '../widgets/farm_analytics_dashboard.dart';
 import '../widgets/field_management_section.dart';
 import '../widgets/quick_action_buttons.dart';
 import '../utils/app_theme.dart';
+import '../utils/layout_helpers.dart';
 
 class FarmFeaturesScreen extends StatefulWidget {
   const FarmFeaturesScreen({super.key});
@@ -64,41 +65,38 @@ class _FarmFeaturesScreenState extends State<FarmFeaturesScreen>
             opacity: _fadeAnimation,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Farm Profile Header Card
-                  const FarmProfileHeader(),
-                  
-                  const SizedBox(height: 20),
-                  
-                  // Quick Action Buttons
-                  const QuickActionButtons(),
-                  
-                  const SizedBox(height: 20),
-                  
-                  // My Crops Section
-                  _buildSectionHeader('My Crops', Icons.agriculture),
-                  const SizedBox(height: 12),
-                  const CropsGrid(),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Farm Analytics Dashboard
-                  _buildSectionHeader('Farm Analytics', Icons.analytics),
-                  const SizedBox(height: 12),
-                  const FarmAnalyticsDashboard(),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Field Management Section
-                  _buildSectionHeader('Field Management', Icons.settings),
-                  const SizedBox(height: 12),
-                  const FieldManagementSection(),
-                  
-                  const SizedBox(height: 100), // Space for FAB
-                ],
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1200), // Max width for better layout
+                  child: Padding(
+                    padding: LayoutHelpers.getScreenPadding(context),
+                    child: LayoutHelpers.safeColumn(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 16,
+                      children: [
+                        // Farm Profile Header Card
+                        const FarmProfileHeader(),
+                        
+                        // Quick Action Buttons
+                        const QuickActionButtons(),
+                        
+                        // My Crops Section
+                        _buildSectionHeader('My Crops', Icons.agriculture),
+                        const CropsGrid(),
+                        
+                        // Farm Analytics Dashboard
+                        _buildSectionHeader('Farm Analytics', Icons.analytics),
+                        const FarmAnalyticsDashboard(),
+                        
+                        // Field Management Section
+                        _buildSectionHeader('Field Management', Icons.settings),
+                        const FieldManagementSection(),
+                        
+                        const SizedBox(height: 80), // Space for FAB
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
