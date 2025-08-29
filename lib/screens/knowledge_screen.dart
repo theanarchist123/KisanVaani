@@ -1,72 +1,200 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/app_theme.dart';
+import '../providers/knowledge_provider.dart';
+import '../models/knowledge_models.dart';
+import '../widgets/pdf_viewer.dart';
+import 'article_detail_screen.dart';
 
-class KnowledgeScreen extends StatelessWidget {
+class KnowledgeScreen extends StatefulWidget {
   const KnowledgeScreen({super.key});
 
   @override
+  State<KnowledgeScreen> createState() => _KnowledgeScreenState();
+}
+
+class _KnowledgeScreenState extends State<KnowledgeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<KnowledgeProvider>(context, listen: false).fetchLatestArticles();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Search Bar
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: const TextField(
-              decoration: InputDecoration(
-                hintText: 'Search knowledge...',
-                border: InputBorder.none,
-                icon: Icon(Icons.search, color: AppTheme.primaryGreen),
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundLight,
+      body: RefreshIndicator(
+        onRefresh: () => Provider.of<KnowledgeProvider>(context, listen: false).refreshAll(),
+        color: AppTheme.primaryGreen,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Search Bar
+              _buildSearchBar(),
+              
+              const SizedBox(height: 20),
+              
+              // Offline Packs Section
+              _buildOfflinePacksSection(),
+              
+              const SizedBox(height: 24),
+              
+              // Latest Articles Section
+              _buildLatestArticlesSection(),
+              
+              const SizedBox(height: 24),
+              
+              // Learning Categories
+              _buildCategoriesSection(),
+              
+              const SizedBox(height: 100),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (value) {
+          setState(() {
+            _searchQuery = value;
+          });
+        },
+        decoration: const InputDecoration(
+          hintText: 'Search knowledge packs & articles...',
+          border: InputBorder.none,
+          icon: Icon(Icons.search, color: AppTheme.primaryGreen),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOfflinePacksSection() {
+    return Consumer<KnowledgeProvider>(
+      builder: (context, provider, child) {
+        List<OfflinePack> filteredPacks = provider.offlinePacks;
+        
+        if (_searchQuery.isNotEmpty) {
+          filteredPacks = filteredPacks.where((pack) =>
+            pack.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            pack.description.toLowerCase().contains(_searchQuery.toLowerCase())
+          ).toList();
+        }
+
+        return Column(
+          children: [
+            _buildSectionHeader('Offline Knowledge Packs', Icons.offline_pin, 
+              subtitle: 'Download for offline reading'),
+            const SizedBox(height: 12),
+            
+            if (filteredPacks.isEmpty && _searchQuery.isNotEmpty)
+              _buildEmptySearch('No offline packs found')
+            else
+              ...filteredPacks.map((pack) => _buildOfflinePackCard(pack)),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLatestArticlesSection() {
+    return Consumer<KnowledgeProvider>(
+      builder: (context, provider, child) {
+        List<Article> filteredArticles = provider.articles;
+        
+        if (_searchQuery.isNotEmpty) {
+          filteredArticles = filteredArticles.where((article) =>
+            article.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            article.description.toLowerCase().contains(_searchQuery.toLowerCase())
+          ).toList();
+        }
+
+        return Column(
+          children: [
+            _buildSectionHeader('Latest Agriculture News', Icons.article,
+              subtitle: 'Stay updated with farming trends'),
+            const SizedBox(height: 12),
+            
+            if (provider.isLoadingArticles)
+              _buildLoadingIndicator('Loading latest articles...')
+            else if (filteredArticles.isEmpty && _searchQuery.isNotEmpty)
+              _buildEmptySearch('No articles found')
+            else if (filteredArticles.isEmpty)
+              _buildEmptyState('No articles available', 'Pull to refresh for latest news')
+            else
+              ...filteredArticles.take(5).map((article) => _buildArticleCard(article)),
+              
+            if (filteredArticles.isNotEmpty && filteredArticles.length > 5) ...[
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () => _showAllArticles(filteredArticles),
+                style: TextButton.styleFrom(foregroundColor: AppTheme.primaryGreen),
+                child: const Text('View All Articles'),
               ),
-            ),
-          ),
-          
-          const SizedBox(height: 20),
-          
-          // Offline Packs Section
-          _buildSectionHeader('Offline Packs', Icons.download),
-          const SizedBox(height: 12),
-          
-          _buildOfflinePackCard(
-            'Tomato Farming',
-            'Complete guide - from sowing to harvest',
-            'downloaded',
-            Colors.green,
-          ),
-          
-          _buildOfflinePackCard(
-            'Wheat Farming',
-            'Complete guide for Rabi crop',
-            'download',
-            AppTheme.primaryGreen,
-          ),
-          
-          _buildOfflinePackCard(
-            'Organic Farming',
-            'Farming with natural methods',
-            'download',
-            AppTheme.primaryGreen,
-          ),
-          
-          const SizedBox(height: 24),
-          
-          // Learning Categories
-          _buildSectionHeader('Categories', Icons.category),
-          const SizedBox(height: 12),
-          
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildCategoriesSection() {
+    final categories = [
+      {'emoji': '🌱', 'title': 'Crop Science', 'count': '25 topics'},
+      {'emoji': '🚜', 'title': 'Farm Equipment', 'count': '15 topics'},
+      {'emoji': '🐛', 'title': 'Pest Management', 'count': '20 topics'},
+      {'emoji': '💧', 'title': 'Irrigation', 'count': '18 topics'},
+      {'emoji': '🌿', 'title': 'Organic Farming', 'count': '12 topics'},
+      {'emoji': '💰', 'title': 'Market Trends', 'count': '10 topics'},
+    ];
+
+    List<Map<String, String>> filteredCategories = categories;
+    
+    if (_searchQuery.isNotEmpty) {
+      filteredCategories = categories.where((category) =>
+        category['title']!.toLowerCase().contains(_searchQuery.toLowerCase())
+      ).toList();
+    }
+
+    return Column(
+      children: [
+        _buildSectionHeader('Knowledge Categories', Icons.category,
+          subtitle: 'Explore farming topics'),
+        const SizedBox(height: 12),
+        
+        if (filteredCategories.isEmpty)
+          _buildEmptySearch('No categories found')
+        else
           GridView.count(
             crossAxisCount: 2,
             shrinkWrap: true,
@@ -74,74 +202,182 @@ class KnowledgeScreen extends StatelessWidget {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             childAspectRatio: 1.2,
-            children: [
-              _buildCategoryCard('🌱', 'Crop Science', '25 topics'),
-              _buildCategoryCard('🚜', 'Farm Equipment', '15 topics'),
-              _buildCategoryCard('🐛', 'Pest Management', '20 topics'),
-              _buildCategoryCard('💧', 'Irrigation Tech', '18 topics'),
-              _buildCategoryCard('🌿', 'Organic Farming', '12 topics'),
-              _buildCategoryCard('💰', 'Marketing', '10 topics'),
-            ],
+            children: filteredCategories.map((category) =>
+              _buildCategoryCard(
+                category['emoji']!,
+                category['title']!,
+                category['count']!,
+              )
+            ).toList(),
           ),
-          
-          const SizedBox(height: 24),
-          
-          // Recent Articles
-          _buildSectionHeader('Latest Articles', Icons.article),
-          const SizedBox(height: 12),
-          
-          _buildArticleCard(
-            'How to test soil quality',
-            'Testing soil quality is essential for healthy crops...',
-            '2 days ago',
-          ),
-          
-          _buildArticleCard(
-            'Crop care during rainy season',
-            'Ways to protect crops from damage during monsoon...',
-            '1 week ago',
-          ),
-          
-          const SizedBox(height: 100),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title, IconData icon) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppTheme.primaryGreen.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            icon,
-            color: AppTheme.primaryGreen,
-            size: 20,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.textDark,
-          ),
-        ),
       ],
     );
   }
 
-  Widget _buildOfflinePackCard(
-    String title,
-    String subtitle,
-    String status,
-    Color statusColor,
-  ) {
+  Widget _buildSectionHeader(String title, IconData icon, {String? subtitle}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryGreen.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: AppTheme.primaryGreen,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.textDark,
+              ),
+            ),
+          ],
+        ),
+        if (subtitle != null) ...[
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 44),
+            child: Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildOfflinePackCard(OfflinePack pack) {
+    return Consumer<KnowledgeProvider>(
+      builder: (context, provider, child) {
+        final isDownloading = provider.downloadProgress.containsKey(pack.id);
+        final progress = provider.downloadProgress[pack.id] ?? 0.0;
+        
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(pack.status).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: Icon(
+                      _getStatusIcon(pack.status),
+                      color: _getStatusColor(pack.status),
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          pack.title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          pack.description,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.file_present, size: 14, color: Colors.grey[500]),
+                            const SizedBox(width: 4),
+                            Text(
+                              pack.formattedSize,
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Icon(Icons.language, size: 14, color: Colors.grey[500]),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Hindi & English',
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => _handlePackAction(pack),
+                    icon: Icon(
+                      pack.status == OfflinePackStatus.downloaded ? Icons.open_in_new : Icons.download,
+                      color: _getStatusColor(pack.status),
+                    ),
+                  ),
+                ],
+              ),
+              
+              if (isDownloading) ...[
+                const SizedBox(height: 12),
+                LinearProgressIndicator(
+                  value: progress,
+                  backgroundColor: Colors.grey[200],
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Downloading... ${(progress * 100).toInt()}%',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildArticleCard(Article article) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -156,50 +392,69 @@ class KnowledgeScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: Icon(
-              status == 'downloaded' ? Icons.check_circle : Icons.download,
-              color: statusColor,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: InkWell(
+        onTap: () => _openArticle(article),
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                Expanded(
+                  child: Text(
+                    article.title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryGreen.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Text(
+                    'NEWS',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryGreen,
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          Icon(
-            Icons.arrow_forward_ios,
-            size: 16,
-            color: Colors.grey[400],
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              article.description,
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.access_time, size: 14, color: Colors.grey[500]),
+                const SizedBox(width: 4),
+                Text(
+                  article.timeAgo,
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 12,
+                  ),
+                ),
+                const Spacer(),
+                if (article.imageUrl.isNotEmpty)
+                  Icon(Icons.image, size: 14, color: Colors.grey[500]),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -218,79 +473,208 @@ class KnowledgeScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            emoji,
-            style: const TextStyle(fontSize: 32),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
+      child: InkWell(
+        onTap: () => _openCategory(title),
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              emoji,
+              style: const TextStyle(fontSize: 32),
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            count,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 12,
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              count,
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildArticleCard(String title, String content, String time) {
+  Widget _buildLoadingIndicator(String message) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Column(
+          children: [
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+    );
+  }
+
+  Widget _buildEmptyState(String title, String subtitle) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Column(
+          children: [
+            Icon(
+              Icons.article_outlined,
+              size: 48,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[500],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptySearch(String message) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Column(
+          children: [
+            Icon(
+              Icons.search_off,
+              size: 48,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _getStatusColor(OfflinePackStatus status) {
+    switch (status) {
+      case OfflinePackStatus.downloaded:
+        return Colors.green;
+      case OfflinePackStatus.notDownloaded:
+        return AppTheme.primaryGreen;
+      case OfflinePackStatus.downloading:
+        return Colors.orange;
+      case OfflinePackStatus.error:
+        return Colors.red;
+    }
+  }
+
+  IconData _getStatusIcon(OfflinePackStatus status) {
+    switch (status) {
+      case OfflinePackStatus.downloaded:
+        return Icons.check_circle;
+      case OfflinePackStatus.notDownloaded:
+        return Icons.download;
+      case OfflinePackStatus.downloading:
+        return Icons.downloading;
+      case OfflinePackStatus.error:
+        return Icons.error;
+    }
+  }
+
+  void _handlePackAction(OfflinePack pack) {
+    final provider = Provider.of<KnowledgeProvider>(context, listen: false);
+    
+    if (pack.status == OfflinePackStatus.downloaded) {
+      // Open the downloaded PDF
+      if (pack.localPath != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfViewerScreen(
+              filePath: pack.localPath!,
+              title: pack.title,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            content,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 14,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('PDF file path not found'),
+            backgroundColor: Colors.red,
           ),
-          const SizedBox(height: 8),
-          Text(
-            time,
-            style: TextStyle(
-              color: Colors.grey[500],
-              fontSize: 12,
-            ),
-          ),
-        ],
+        );
+      }
+    } else {
+      // Download the pack
+      provider.downloadPack(pack.id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Downloading ${pack.title}...'),
+          backgroundColor: AppTheme.primaryGreen,
+        ),
+      );
+    }
+  }
+
+  void _openArticle(Article article) {
+    // Navigate to article detail screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ArticleDetailScreen(article: article),
+      ),
+    );
+  }
+
+  void _openCategory(String categoryTitle) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Opening category: $categoryTitle'),
+        backgroundColor: AppTheme.primaryGreen,
+      ),
+    );
+  }
+
+  void _showAllArticles(List<Article> articles) {
+    // Navigate to all articles screen
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Showing all ${articles.length} articles'),
+        backgroundColor: AppTheme.primaryGreen,
       ),
     );
   }

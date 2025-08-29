@@ -8,6 +8,7 @@ import 'providers/weather_provider.dart';
 import 'providers/government_scheme_provider.dart';
 import 'providers/hybrid_translation_provider.dart';
 import 'providers/language_provider.dart';
+import 'providers/knowledge_provider.dart';
 import 'services/notification_service.dart';
 import 'utils/app_theme.dart';
 import 'generated/app_localizations.dart';
@@ -45,6 +46,7 @@ class KisanVaaniApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => VoiceAssistantProvider()),
         ChangeNotifierProvider(create: (_) => WeatherProvider()),
         ChangeNotifierProvider(create: (_) => GovernmentSchemeProvider()),
+        ChangeNotifierProvider(create: (_) => KnowledgeProvider()),
       ],
       child: Consumer<LanguageProvider>(
         builder: (context, languageProvider, child) {
