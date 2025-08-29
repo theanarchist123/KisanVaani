@@ -10,27 +10,11 @@ import numpy as np
 import os
 import logging
 
-# Configure log        # Prepare response
-        response = {
-            'success': True,
-            'prediction': {
-                'predicted_yield': round(float(predicted_yield), 2),
-                'unit': 'tons/hectare',
-                'confidence': model_package['performance_metrics']['r2_score']
-            },
-            'model_info': {
-                'model_name': model_package['model_name'],
-                'r2_score': model_package['performance_metrics']['r2_score'],
-                'mae': model_package['performance_metrics']['mae']
-            },
-            'input_processed': input_data,
-            'feature_mapping': feature_mapping
-        }
-        
-        # Add simulation mode indicator if applicable
-        if model_package.get('simulation_mode', False):
-            response['note'] = 'Using intelligent agricultural simulation (real model unavailable)'
-            response['prediction']['simulation_mode'] = TruesicConfig(level=logging.INFO)
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 # Initialize Flask app
