@@ -28,54 +28,13 @@ def load_model():
     """Load the trained crop yield prediction model"""
     global model_package
     try:
-        # Try to load from flask_api folder first
-        model_path = os.path.join(os.path.dirname(__file__), 'yield_prediction_model.pkl')
-        logger.info(f"🔍 Attempting to load model from: {model_path}")
-        
-        if not os.path.exists(model_path):
-            # Fallback to parent directory
-            model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'yield_prediction_model.pkl')
-            logger.info(f"🔍 Fallback: Attempting to load model from: {model_path}")
-        
-        # Try to import required modules first
-        try:
-            import sklearn
-            logger.info(f"✅ scikit-learn version: {sklearn.__version__}")
-        except ImportError as sklearn_error:
-            logger.warning(f"⚠️ scikit-learn import issue: {sklearn_error}")
-            raise Exception(f"scikit-learn not properly installed: {sklearn_error}")
-        
-        # Try to load the model using joblib
-        import joblib
+        model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'yield_prediction_model.pkl')
         model_package = joblib.load(model_path)
-        logger.info(f"✅ Model loaded successfully: {model_package.get('model_name', 'Trained Model')}")
-        
-        # Check if it's a proper model package with required components
-        if 'model' in model_package:
-            logger.info(f"📊 Model R² Score: {model_package.get('performance_metrics', {}).get('r2_score', 'N/A')}")
-            logger.info("🎯 Real trained model is now active!")
-            return True
-        else:
-            logger.warning("⚠️ Model file loaded but missing 'model' component")
-            raise Exception("Invalid model package structure")
-            
+        logger.info(f"✅ Model loaded successfully: {model_package['model_name']}")
+        logger.info(f"📊 Model R² Score: {model_package['performance_metrics']['r2_score']:.4f}")
+        return True
     except Exception as e:
-        logger.error(f"❌ Could not load trained model: {str(e)}")
-        logger.info("🔄 Creating alternative model loading approach...")
-        
-        # Alternative approach: Try to manually inspect the pickle file
-        try:
-            model_path = os.path.join(os.path.dirname(__file__), 'yield_prediction_model.pkl')
-            import pickle
-            with open(model_path, 'rb') as f:
-                model_package = pickle.load(f)
-            logger.info("✅ Model loaded using alternative pickle method!")
-            if 'model' in model_package:
-                logger.info("🎯 Real trained model is now active!")
-                return True
-        except Exception as pickle_error:
-            logger.error(f"❌ Alternative loading also failed: {pickle_error}")
-        
+        logger.warning(f"⚠️ Could not load trained model: {str(e)}")
         logger.info("🔄 Falling back to intelligent simulation mode...")
         # Create a fallback model package for simulation
         model_package = {

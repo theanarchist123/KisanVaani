@@ -1,0 +1,160 @@
+{
+    "crop_recommendations": [
+        {
+            "region": "Punjab",
+            "season": "Rabi",
+            "crops": [
+                {
+                    "name": "Wheat",
+                    "varieties": ["HD-2967", "HD-3086", "PBW-550", "PBW-723", "PBW-752"],
+                    "sowing_time": "October-November",
+                    "soil_type": "Well-drained loamy soil",
+                    "irrigation": "4-5 irrigations",
+                    "yield_potential": "45-50 quintals/hectare",
+                    "market_value": "High demand in local and national markets",
+                    "success_factors": [
+                        "Timely sowing is crucial",
+                        "Regular monitoring for yellow rust",
+                        "Balanced fertilizer application",
+                        "Proper water management"
+                    ]
+                },
+                {
+                    "name": "Mustard",
+                    "varieties": ["RLC-3", "PBR-357", "PBR-91"],
+                    "sowing_time": "September-October",
+                    "soil_type": "Light to medium soils",
+                    "irrigation": "2-3 irrigations",
+                    "yield_potential": "15-20 quintals/hectare",
+                    "market_value": "Good returns due to oil demand",
+                    "success_factors": [
+                        "Early sowing gives better yields",
+                        "Monitor for aphid infestation",
+                        "Proper row spacing",
+                        "Timely pest management"
+                    ]
+                }
+            ]
+        },
+        {
+            "region": "Punjab",
+            "season": "Kharif",
+            "crops": [
+                {
+                    "name": "Paddy",
+                    "varieties": ["PR-126", "PR-124", "PR-121"],
+                    "sowing_time": "June-July",
+                    "soil_type": "Clay loam to sandy loam",
+                    "irrigation": "Regular flooding",
+                    "yield_potential": "65-75 quintals/hectare",
+                    "market_value": "Government MSP support",
+                    "success_factors": [
+                        "Direct seeding rice (DSR) technology",
+                        "Water management is crucial",
+                        "Integrated pest management",
+                        "Proper nutrient management"
+                    ]
+                },
+                {
+                    "name": "Cotton",
+                    "varieties": ["BT Cotton hybrids", "PAU Bt-1"],
+                    "sowing_time": "April-May",
+                    "soil_type": "Well-drained soils",
+                    "irrigation": "4-5 irrigations",
+                    "yield_potential": "20-25 quintals/hectare",
+                    "market_value": "Premium prices for quality produce",
+                    "success_factors": [
+                        "Pink bollworm management",
+                        "Proper spacing",
+                        "Timely picking",
+                        "Regular monitoring"
+                    ]
+                },
+                {
+                    "name": "Maize",
+                    "varieties": ["PMH-1", "PMH-2", "J-1006"],
+                    "sowing_time": "June-July",
+                    "soil_type": "Well-drained loamy soil",
+                    "irrigation": "4-6 irrigations",
+                    "yield_potential": "45-50 quintals/hectare",
+                    "market_value": "Growing demand for poultry feed",
+                    "success_factors": [
+                        "Proper drainage",
+                        "Stem borer management",
+                        "Weed control",
+                        "Balanced fertilization"
+                    ]
+                }
+            ]
+        },
+        {
+            "region": "Punjab",
+            "season": "Zaid",
+            "crops": [
+                {
+                    "name": "Moong",
+                    "varieties": ["PAU-911", "ML-818"],
+                    "sowing_time": "March-April",
+                    "soil_type": "Sandy loam to clay loam",
+                    "irrigation": "2-3 irrigations",
+                    "yield_potential": "8-10 quintals/hectare",
+                    "market_value": "Good returns in local markets",
+                    "success_factors": [
+                        "Short duration crop",
+                        "Improves soil fertility",
+                        "Low water requirement",
+                        "Easy to manage"
+                    ]
+                }
+            ]
+        }
+    ],
+    "climate_considerations": {
+        "annual_rainfall": "700-1000 mm",
+        "temperature_range": {
+            "summer": "32-45°C",
+            "winter": "5-25°C"
+        },
+        "soil_types": [
+            "Alluvial soil",
+            "Sandy loam",
+            "Clay loam"
+        ]
+    },
+    "modern_farming_practices": [
+        {
+            "practice": "Conservation Agriculture",
+            "benefits": [
+                "Reduces water usage",
+                "Improves soil health",
+                "Lower production costs",
+                "Environmental sustainability"
+            ]
+        },
+        {
+            "practice": "Precision Farming",
+            "benefits": [
+                "Optimal resource utilization",
+                "Higher yields",
+                "Reduced input costs",
+                "Better quality produce"
+            ]
+        },
+        {
+            "practice": "Crop Diversification",
+            "benefits": [
+                "Risk management",
+                "Better income distribution",
+                "Soil health improvement",
+                "Market flexibility"
+            ]
+        }
+    ],
+    "sustainable_recommendations": [
+        "Incorporate crop residue instead of burning",
+        "Use water-efficient irrigation systems",
+        "Adopt integrated pest management",
+        "Practice crop rotation",
+        "Use organic fertilizers when possible"
+    ]
+}

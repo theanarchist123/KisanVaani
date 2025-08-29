@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import '../services/rag_service.dart';
+import '../services/enhanced_rag_service.dart';
 import '../services/vapi_service.dart';
+import '../models/farm_models.dart';
+import 'dart:async';
 
 enum VoiceAssistantMode {
   local,    // Local speech-to-text + RAG backend
@@ -97,25 +99,25 @@ class EnhancedVoiceAssistantProvider extends ChangeNotifier {
 
   /// Check RAG backend health with retry mechanism
   Future<void> _checkRAGBackendHealth() async {
-    print('Checking RAG backend health...');
+    print('Checking Enhanced RAG backend health...');
     // First try
-    _ragBackendHealthy = await RAGService.isHealthy();
+    _ragBackendHealthy = await EnhancedRagService.isEnhancedServerRunning();
     
     // If failed on first try, attempt with a short delay
     if (!_ragBackendHealthy) {
       print('First health check failed, retrying in 500ms...');
       await Future.delayed(const Duration(milliseconds: 500));
-      _ragBackendHealthy = await RAGService.isHealthy();
+      _ragBackendHealthy = await EnhancedRagService.isEnhancedServerRunning();
       
       // If still failed, try one more time with longer delay
       if (!_ragBackendHealthy) {
         print('Second health check failed, retrying in 1s...');
         await Future.delayed(const Duration(seconds: 1));
-        _ragBackendHealthy = await RAGService.isHealthy();
+        _ragBackendHealthy = await EnhancedRagService.isEnhancedServerRunning();
       }
     }
     
-    print('RAG Backend Health: $_ragBackendHealthy');
+    print('Enhanced RAG Backend Health: $_ragBackendHealthy');
     notifyListeners();
   }
 
@@ -246,24 +248,41 @@ class EnhancedVoiceAssistantProvider extends ChangeNotifier {
       print('Processing query with RAG: "$userInput"');
       final stopwatch = Stopwatch()..start();
       
-      final ragResponse = await RAGService.queryRAG(
+      // Enhanced RAG with farmer context
+      final enhancedResponse = await EnhancedRagService.queryWithContext(
         question: userInput,
-        maxChunks: 5,
-        similarityThreshold: 0.7,
+        userContext: {
+          'interaction_type': 'voice',
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+        conversationId: 'voice_${DateTime.now().millisecondsSinceEpoch}',
+        maxChunks: 3, // Reduced for voice responses
+        similarityThreshold: 0.6, // Lower threshold for voice
       );
 
       stopwatch.stop();
       _processingTime = '${stopwatch.elapsedMilliseconds}ms';
 
-      if (ragResponse != null && ragResponse.success) {
-        _lastResponse = ragResponse.answer;
+      if (enhancedResponse != null) {
+        // Format response for voice
+        _lastResponse = _formatResponseForVoice(enhancedResponse.answer);
+        
+        // Add urgency indicators
+        if (enhancedResponse.urgency == 'urgent') {
+          _lastResponse = "तुरंत ध्यान दें - $_lastResponse";
+        } else if (enhancedResponse.urgency == 'high') {
+          _lastResponse = "महत्वपूर्ण - $_lastResponse";
+        }
+        
         await speak(_lastResponse);
         
-        print('🤖 RAG Response: $_lastResponse');
+        print('🤖 Enhanced RAG Response: $_lastResponse');
         print('⏱️ Processing Time: $_processingTime');
-        print('📚 Sources: ${ragResponse.chunks.length} chunks');
+        print('📊 Confidence: ${enhancedResponse.confidence}');
+        print('🔥 Urgency: ${enhancedResponse.urgency}');
+        print('📚 Sources: ${enhancedResponse.chunks.length} chunks');
       } else {
-        print('RAG query failed or returned unsuccessful response');
+        print('Enhanced RAG query failed');
         await _respondWithFallback(userInput);
       }
     } catch (e) {
@@ -275,37 +294,115 @@ class EnhancedVoiceAssistantProvider extends ChangeNotifier {
     }
   }
 
+  /// Format response for voice output
+  String _formatResponseForVoice(String text) {
+    // Remove markdown formatting
+    String voiceText = text.replaceAll(RegExp(r'\*\*|__|\*|_'), '');
+    voiceText = voiceText.replaceAll(RegExp(r'#{1,6}\s'), '');
+    
+    // Replace bullet points with spoken format
+    voiceText = voiceText.replaceAll('•', 'पहले,');
+    voiceText = voiceText.replaceAll('-', '');
+    
+    // Replace technical terms with Hindi equivalents for better understanding
+    voiceText = voiceText.replaceAll('fertilizer', 'खाद');
+    voiceText = voiceText.replaceAll('pesticide', 'कीटनाशक');
+    voiceText = voiceText.replaceAll('irrigation', 'सिंचाई');
+    voiceText = voiceText.replaceAll('crop', 'फसल');
+    
+    // Limit length for voice (max ~100 words for clarity)
+    List<String> words = voiceText.split(' ');
+    if (words.length > 100) {
+      voiceText = words.take(100).join(' ') + '... और जानकारी के लिए कृपया दोबारा पूछें।';
+    }
+    
+    return voiceText.trim();
+  }
+
   /// Fallback response when RAG is unavailable
   Future<void> _respondWithFallback(String userInput) async {
     _lastResponse = _processLocalVoiceCommand(userInput);
     await speak(_lastResponse);
   }
 
-  /// Local voice command processing (fallback)
+  /// Enhanced local voice command processing (fallback)
   String _processLocalVoiceCommand(String command) {
     final lowerCommand = command.toLowerCase();
     
-    if (lowerCommand.contains('hello') || lowerCommand.contains('hi')) {
-      return 'Hello! I am Kisaan Vaani, your farming assistant. How can I help you today?';
+    // Hindi/English greetings
+    if (lowerCommand.contains('नमस्ते') || lowerCommand.contains('hello') || 
+        lowerCommand.contains('hi') || lowerCommand.contains('namaste')) {
+      return 'नमस्ते! मैं किसान वाणी हूं, आपका खेती सहायक। मैं आपकी कैसे मदद कर सकता हूं?';
     }
     
-    if (lowerCommand.contains('crop') || lowerCommand.contains('farming')) {
-      return 'I can help you with crop management, farming techniques, and agricultural advice. What specific information do you need?';
+    // Farming topics
+    if (lowerCommand.contains('खाद') || lowerCommand.contains('fertilizer')) {
+      return 'खाद के लिए पहले मिट्टी की जांच कराएं। फसल के अनुसार यूरिया, डीएपी और पोटाश का संतुलित उपयोग करें।';
     }
     
-    if (lowerCommand.contains('weather')) {
-      return 'For weather information, I recommend checking the weather section in the app. I can help with farming decisions based on weather conditions.';
+    if (lowerCommand.contains('पानी') || lowerCommand.contains('सिंचाई') || 
+        lowerCommand.contains('irrigation') || lowerCommand.contains('water')) {
+      return 'सिंचाई के लिए ड्रिप या स्प्रिंकलर सिस्टम का उपयोग करें। सुबह या शाम के समय पानी दें जब सूरज कम हो।';
     }
     
-    if (lowerCommand.contains('yield') || lowerCommand.contains('prediction')) {
-      return 'I can help predict crop yields using AI. Please use the Yield Prediction feature in the app for detailed analysis.';
+    if (lowerCommand.contains('बीमारी') || lowerCommand.contains('disease') || 
+        lowerCommand.contains('रोग')) {
+      return 'फसल में बीमारी दिखे तो तुरंत प्रभावित भाग को हटाएं। जैविक दवाओं का प्राथमिकता दें और विशेषज्ञ से सलाह लें।';
     }
     
-    if (lowerCommand.contains('help')) {
-      return 'I can assist with farming questions, crop management, agricultural techniques, and more. Try asking about specific crops or farming challenges.';
+    if (lowerCommand.contains('कीट') || lowerCommand.contains('pest') || 
+        lowerCommand.contains('insects')) {
+      return 'कीट नियंत्रण के लिए नीम का तेल या जैविक कीटनाशक का उपयोग करें। नियमित निगरानी रखें।';
     }
     
-    return 'I understand you said: $command. I can help with farming questions, crop management, and agricultural advice. Could you please rephrase your question?';
+    if (lowerCommand.contains('मौसम') || lowerCommand.contains('weather')) {
+      return 'मौसम की जानकारी ऐप में देखें। बारिश से पहले फसल की सुरक्षा का इंतजाम करें।';
+    }
+    
+    if (lowerCommand.contains('बाजार') || lowerCommand.contains('price') || 
+        lowerCommand.contains('market')) {
+      return 'बाजार भाव के लिए ई-नाम पोर्टल देखें या स्थानीय मंडी से संपर्क करें। सही समय पर बेचने से अच्छा दाम मिलता है।';
+    }
+    
+    if (lowerCommand.contains('बीज') || lowerCommand.contains('seed')) {
+      return 'अच्छी गुणवत्ता के बीज ही खरीदें। प्रमाणित बीजों का उपयोग करें और बुआई से पहले बीज उपचार जरूर करें।';
+    }
+    
+    // Default response
+    return 'मैं आपकी खेती से जुड़ी समस्याओं में मदद कर सकता हूं। कृपया अपना सवाल स्पष्ट रूप से पूछें।';
+  }
+
+  /// Initiate VAPI phone call for farmers
+  Future<bool> initiateVoiceCall(String phoneNumber, {Map<String, dynamic>? farmerContext}) async {
+    try {
+      if (!_vapiConnected) {
+        print('VAPI not connected, attempting to connect...');
+        await _initializeVapi();
+        if (!_vapiConnected) {
+          print('Failed to connect to VAPI');
+          return false;
+        }
+      }
+
+      final response = await EnhancedRagService.initiateVoiceCall(
+        phoneNumber: phoneNumber,
+        farmerContext: farmerContext ?? {
+          'app': 'kisaan_vaani',
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
+
+      if (response) {
+        print('✅ Voice call initiated successfully to $phoneNumber');
+      } else {
+        print('❌ Failed to initiate voice call to $phoneNumber');
+      }
+
+      return response;
+    } catch (e) {
+      print('❌ Error initiating voice call: $e');
+      return false;
+    }
   }
 
   /// Stop listening
