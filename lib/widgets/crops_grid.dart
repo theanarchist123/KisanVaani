@@ -285,28 +285,33 @@ class CropsGrid extends StatelessWidget {
   String _getHealthStatusEnglish(String healthStatus) {
     switch (healthStatus.toLowerCase()) {
       case 'healthy':
-        return 'Healthy';
+      case 'स्वस्थ':
+        return 'स्वस्थ';
       case 'attention':
-        return 'Attention';
+      case 'ध्यान चाहिए':
+        return 'ध्यान चाहिए';
       case 'critical':
-        return 'Critical';
+        return 'गंभीर';
       default:
-        return 'Unknown';
+        return 'अज्ञात';
     }
   }
 
   String _getStageEnglish(String stage) {
     switch (stage.toLowerCase()) {
       case 'seedling':
-        return 'Seedling';
+      case 'पौधारोपण':
+        return 'पौधारोपण';
       case 'growing':
-        return 'Growing';
+      case 'बढ़ना':
+        return 'बढ़ना';
       case 'flowering':
-        return 'Flowering';
+      case 'फूल आना':
+        return 'फूल आना';
       case 'fruiting':
-        return 'Fruiting';
+        return 'फल आना';
       case 'harvest':
-        return 'Harvest';
+        return 'कटाई';
       default:
         return stage;
     }

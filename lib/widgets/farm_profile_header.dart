@@ -131,7 +131,7 @@ class FarmProfileHeader extends StatelessWidget {
                   Expanded(
                     child: _buildStatCard(
                       '${farm.totalAcres}',
-                      'Total Land (Acres)',
+                      'कुल भूमि (एकड़)\nTotal Land (Acres)',
                       Icons.landscape,
                     ),
                   ),
@@ -139,7 +139,7 @@ class FarmProfileHeader extends StatelessWidget {
                   Expanded(
                     child: _buildStatCard(
                       '${farm.activeCropsCount}',
-                      'Active Crops',
+                      'सक्रिय फसलें\nActive Crops',
                       Icons.agriculture,
                     ),
                   ),
@@ -147,7 +147,7 @@ class FarmProfileHeader extends StatelessWidget {
                   Expanded(
                     child: _buildStatCard(
                       '${(farmProvider.seasonProgress * 100).round()}%',
-                      'Season Progress',
+                      'सीजन प्रगति\nSeason Progress',
                       Icons.timeline,
                     ),
                   ),

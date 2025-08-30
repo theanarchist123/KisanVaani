@@ -28,7 +28,7 @@ def load_model():
     """Load the trained crop yield prediction model"""
     global model_package
     try:
-        model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'yield_prediction_model.pkl')
+        model_path = os.path.join(os.path.dirname(__file__), 'yield_prediction_model.pkl')
         model_package = joblib.load(model_path)
         logger.info(f"✅ Model loaded successfully: {model_package['model_name']}")
         logger.info(f"📊 Model R² Score: {model_package['performance_metrics']['r2_score']:.4f}")

@@ -56,11 +56,11 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
           tabs: const [
-            Tab(text: 'Schemes'),
-            Tab(text: 'My Applications'),
-            Tab(text: 'Documents'),
-            Tab(text: 'Benefits'),
-            Tab(text: 'Updates'),
+            Tab(text: 'योजनाएं'),
+            Tab(text: 'मेरे आवेदन'),
+            Tab(text: 'दस्तावेज'),
+            Tab(text: 'लाभ'),
+            Tab(text: 'अपडेट'),
           ],
         ),
         actions: [
@@ -122,8 +122,8 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
       builder: (context, provider, child) {
         if (provider.userApplications.isEmpty) {
           return _buildEmptyState(
-            'No Applications Yet',
-            'Start by applying for a government scheme',
+            'अभी तक कोई आवेदन नहीं',
+            'सरकारी योजना के लिए आवेदन करके शुरुआत करें',
             Icons.assignment_outlined,
           );
         }
@@ -173,7 +173,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Quick Actions',
+            'त्वरित कार्य',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -184,7 +184,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
             children: [
               Expanded(
                 child: _buildQuickActionButton(
-                  'Apply for PM-KISAN',
+                  'PM-KISAN के लिए आवेदन करें',
                   Icons.money,
                   () => _quickApply('pm_kisan'),
                 ),
@@ -192,7 +192,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
               const SizedBox(width: 12),
               Expanded(
                 child: _buildQuickActionButton(
-                  'Check Status',
+                  'स्थिति जांचें',
                   Icons.track_changes,
                   _showStatusCheck,
                 ),
@@ -242,17 +242,17 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
 
   Widget _buildSchemeCategories() {
     final categories = [
-      {'name': 'Income Support', 'icon': Icons.attach_money, 'count': 3},
-      {'name': 'Credit & Loans', 'icon': Icons.credit_card, 'count': 2},
-      {'name': 'Insurance', 'icon': Icons.security, 'count': 4},
-      {'name': 'Subsidies', 'icon': Icons.local_offer, 'count': 5},
+      {'name': 'आय सहायता', 'icon': Icons.attach_money, 'count': 3},
+      {'name': 'ऋण और वित्त', 'icon': Icons.credit_card, 'count': 2},
+      {'name': 'बीमा', 'icon': Icons.security, 'count': 4},
+      {'name': 'सब्सिडी', 'icon': Icons.local_offer, 'count': 5},
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Categories',
+          'श्रेणियां',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -303,7 +303,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
                           ),
                         ),
                         Text(
-                          '${category['count']} schemes',
+                          '${category['count']} योजनाएं',
                           style: TextStyle(
                             fontSize: 9,
                             color: Colors.grey[600],
@@ -326,7 +326,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Available Schemes',
+          'उपलब्ध योजनाएं',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -387,7 +387,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
           ),
           const SizedBox(height: 16),
           Text(
-            'Error',
+            'त्रुटि',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -408,7 +408,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
             onPressed: () {
               context.read<GovernmentSchemeProvider>().clearError();
             },
-            child: const Text('Retry'),
+            child: const Text('पुनः प्रयास'),
           ),
         ],
       ),
@@ -419,7 +419,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Search Schemes'),
+        title: const Text('योजनाएं खोजें\n(Search Schemes)'),
         content: TextField(
           decoration: const InputDecoration(
             hintText: 'Enter scheme name or keywords...',
@@ -433,7 +433,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('रद्द करें\n(Cancel)'),
           ),
         ],
       ),
@@ -478,10 +478,10 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Check Application Status'),
+        title: const Text('आवेदन स्थिति जांचें\n(Check Application Status)'),
         content: TextField(
           decoration: const InputDecoration(
-            hintText: 'Enter tracking number...',
+            hintText: 'ट्रैकिंग नंबर दर्ज करें...\n(Enter tracking number...)',
             border: OutlineInputBorder(),
           ),
           onSubmitted: (value) {
@@ -492,7 +492,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('रद्द करें\n(Cancel)'),
           ),
         ],
       ),
@@ -517,7 +517,7 @@ class _GovernmentSchemesScreenState extends State<GovernmentSchemesScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: const Text('बंद करें\n(Close)'),
           ),
         ],
       ),

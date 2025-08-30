@@ -43,7 +43,7 @@ class KnowledgeProvider extends ChangeNotifier {
     final predefinedPacks = [
       OfflinePack(
         id: 'icar_kharif_2025',
-        title: 'ICAR Kharif Agro Advisories 2025',
+        title: 'ICAR खरीफ कृषि सलाह 2025',
         description: 'Complete farming guidance for Kharif season crops including rice, cotton, sugarcane, and pulses.',
         pdfUrl: 'https://icar.org.in/sites/default/files/Circulars/ICAR-En-Kharif-Agro-Advisories-for-Farmers-2025.pdf',
         fileName: 'icar_kharif_advisories_2025.pdf',
@@ -63,7 +63,7 @@ class KnowledgeProvider extends ChangeNotifier {
       ),
       OfflinePack(
         id: 'geographical_indications',
-        title: 'Geographical Indications in Agriculture',
+        title: 'कृषि में भौगोलिक संकेत',
         description: 'Plant species with geographical indications and traditional knowledge in agriculture.',
         pdfUrl: 'https://icar.org.in/sites/default/files/2022-06/Geographical-Indications-of-Plant-Species-in-ITKs-in-Agriculture.pdf',
         fileName: 'geographical_indications_agriculture.pdf',
@@ -73,7 +73,7 @@ class KnowledgeProvider extends ChangeNotifier {
       ),
       OfflinePack(
         id: 'naas_bulletin_dec_2024',
-        title: 'NAAS Bulletin December 2024',
+        title: 'NAAS बुलेटिन दिसंबर 2024',
         description: 'Latest research bulletin from National Academy of Agricultural Sciences with cutting-edge findings.',
         pdfUrl: 'https://www.icar-crida.res.in/WDU/Dec_2024/NAAS%20Bulletin-30-December-2024.pdf',
         fileName: 'naas_bulletin_dec_2024.pdf',
@@ -83,7 +83,7 @@ class KnowledgeProvider extends ChangeNotifier {
       ),
       OfflinePack(
         id: 'indigenous_knowledge_inventory',
-        title: 'Indigenous Technical Knowledge Inventory',
+        title: 'स्वदेशी तकनीकी ज्ञान सूची',
         description: 'Comprehensive inventory of indigenous technical knowledge in agriculture practices.',
         pdfUrl: 'https://icar.org.in/sites/default/files/2022-06/Inventory-of-Indigenous-technical-Knowledge-in-Agriculture-Document-2.2.pdf',
         fileName: 'indigenous_knowledge_inventory.pdf',

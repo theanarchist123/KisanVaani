@@ -91,7 +91,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
           });
         },
         decoration: const InputDecoration(
-          hintText: 'Search knowledge packs & articles...',
+          hintText: 'ज्ञान पैक और लेख खोजें...',
           border: InputBorder.none,
           icon: Icon(Icons.search, color: AppTheme.primaryGreen),
         ),
@@ -113,12 +113,12 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
         return Column(
           children: [
-            _buildSectionHeader('Offline Knowledge Packs', Icons.offline_pin, 
-              subtitle: 'Download for offline reading'),
+            _buildSectionHeader('ऑफलाइन ज्ञान पैक', Icons.offline_pin, 
+              subtitle: 'ऑफलाइन पढ़ने के लिए डाउनलोड करें'),
             const SizedBox(height: 12),
             
             if (filteredPacks.isEmpty && _searchQuery.isNotEmpty)
-              _buildEmptySearch('No offline packs found')
+              _buildEmptySearch('कोई ऑफलाइन पैक नहीं मिला\n(No offline packs found)')
             else
               ...filteredPacks.map((pack) => _buildOfflinePackCard(pack)),
           ],
@@ -141,16 +141,16 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
         return Column(
           children: [
-            _buildSectionHeader('Latest Agriculture News', Icons.article,
-              subtitle: 'Stay updated with farming trends'),
+            _buildSectionHeader('नवीनतम कृषि समाचार', Icons.article,
+              subtitle: 'खेती के रुझानों से अपडेट रहें'),
             const SizedBox(height: 12),
             
             if (provider.isLoadingArticles)
-              _buildLoadingIndicator('Loading latest articles...')
+              _buildLoadingIndicator('नवीनतम लेख लोड हो रहे हैं...\n(Loading latest articles...)')
             else if (filteredArticles.isEmpty && _searchQuery.isNotEmpty)
-              _buildEmptySearch('No articles found')
+              _buildEmptySearch('कोई लेख नहीं मिला\n(No articles found)')
             else if (filteredArticles.isEmpty)
-              _buildEmptyState('No articles available', 'Pull to refresh for latest news')
+              _buildEmptyState('कोई लेख उपलब्ध नहीं\n(No articles available)', 'नवीनतम समाचार के लिए पुल करें\n(Pull to refresh for latest news)')
             else
               ...filteredArticles.take(5).map((article) => _buildArticleCard(article)),
               
@@ -159,7 +159,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
               TextButton(
                 onPressed: () => _showAllArticles(filteredArticles),
                 style: TextButton.styleFrom(foregroundColor: AppTheme.primaryGreen),
-                child: const Text('View All Articles'),
+                child: const Text('सभी लेख देखें\n(View All Articles)'),
               ),
             ],
           ],
@@ -170,12 +170,12 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
   Widget _buildCategoriesSection() {
     final categories = [
-      {'emoji': '🌱', 'title': 'Crop Science', 'count': '25 topics'},
-      {'emoji': '🚜', 'title': 'Farm Equipment', 'count': '15 topics'},
-      {'emoji': '🐛', 'title': 'Pest Management', 'count': '20 topics'},
-      {'emoji': '💧', 'title': 'Irrigation', 'count': '18 topics'},
-      {'emoji': '🌿', 'title': 'Organic Farming', 'count': '12 topics'},
-      {'emoji': '💰', 'title': 'Market Trends', 'count': '10 topics'},
+      {'emoji': '🌱', 'title': 'फसल विज्ञान', 'count': '25 विषय'},
+      {'emoji': '🚜', 'title': 'खेती उपकरण', 'count': '15 विषय'},
+      {'emoji': '🐛', 'title': 'कीट प्रबंधन', 'count': '20 विषय'},
+      {'emoji': '💧', 'title': 'सिंचाई', 'count': '18 विषय'},
+      {'emoji': '🌿', 'title': 'जैविक खेती', 'count': '12 विषय'},
+      {'emoji': '💰', 'title': 'बाजार रुझान', 'count': '10 विषय'},
     ];
 
     List<Map<String, String>> filteredCategories = categories;
@@ -188,12 +188,12 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
     return Column(
       children: [
-        _buildSectionHeader('Knowledge Categories', Icons.category,
-          subtitle: 'Explore farming topics'),
+        _buildSectionHeader('ज्ञान श्रेणियां', Icons.category,
+          subtitle: 'खेती के विषयों का अन्वेषण करें'),
         const SizedBox(height: 12),
         
         if (filteredCategories.isEmpty)
-          _buildEmptySearch('No categories found')
+          _buildEmptySearch('कोई श्रेणी नहीं मिली\n(No categories found)')
         else
           GridView.count(
             crossAxisCount: 2,
@@ -363,7 +363,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Downloading... ${(progress * 100).toInt()}%',
+                  'डाउनलोड हो रहा है... ${(progress * 100).toInt()}%\n(Downloading... ${(progress * 100).toInt()}%)',
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],

@@ -34,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'Rajesh Kumar',
+                  'राजेश कुमार',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -42,7 +42,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const Text(
-                  'Farmer | Sonipat, Haryana',
+                  'किसान | सोनीपत, हरियाणा',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white70,
@@ -52,9 +52,9 @@ class ProfileScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildStatCard('5.5', 'Acres'),
-                    _buildStatCard('3', 'Crops'),
-                    _buildStatCard('2', 'Years Exp'),
+                    _buildStatCard('5.5', 'एकड़'),
+                    _buildStatCard('3', 'फसलें'),
+                    _buildStatCard('2', 'वर्ष अनुभव'),
                   ],
                 ),
               ],
@@ -66,57 +66,57 @@ class ProfileScreen extends StatelessWidget {
           // Profile Options
           _buildOptionCard(
             Icons.edit,
-            'Edit Profile',
-            'Update personal information',
+            'प्रोफाइल संपादित करें',
+            'व्यक्तिगत जानकारी अपडेट करें',
             () {},
           ),
           
           _buildOptionCard(
             Icons.agriculture,
-            'Farm Information',
-            'Land and crop details',
+            'खेत की जानकारी',
+            'जमीन और फसल का विवरण',
             () {},
           ),
           
           _buildOptionCard(
             Icons.language,
-            'Language Settings',
-            'Hindi | English',
+            'भाषा सेटिंग्स',
+            'हिंदी | अंग्रेजी',
             () {},
           ),
           
           _buildOptionCard(
             Icons.notifications,
-            'Notification Settings',
-            'Alerts and reminders',
+            'सूचना सेटिंग्स',
+            'अलर्ट और रिमाइंडर',
             () {},
           ),
           
           _buildOptionCard(
             Icons.mic,
-            'Voice Settings',
-            'Microphone and speaker setup',
+            'आवाज़ सेटिंग्स',
+            'माइक्रोफोन और स्पीकर सेटअप',
             () {},
           ),
           
           _buildOptionCard(
             Icons.cloud_sync,
-            'Data Sync',
-            'Cloud backup and sync',
+            'डेटा सिंक\n(Data Sync)',
+            'क्लाउड बैकअप और सिंक\n(Cloud backup and sync)',
             () {},
           ),
           
           _buildOptionCard(
             Icons.help,
-            'Help & Support',
-            'FAQ and contact information',
+            'सहायता और समर्थन\n(Help & Support)',
+            'अक्सर पूछे जाने वाले प्रश्न और संपर्क जानकारी\n(FAQ and contact information)',
             () {},
           ),
           
           _buildOptionCard(
             Icons.info,
-            'About App',
-            'Version 1.0.0',
+            'ऐप के बारे में\n(About App)',
+            'संस्करण 1.0.0\n(Version 1.0.0)',
             () {},
           ),
           
@@ -132,7 +132,7 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               child: const Text(
-                'Logout',
+                'लॉग आउट\n(Logout)',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

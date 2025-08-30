@@ -8,7 +8,7 @@ class LanguageProvider extends ChangeNotifier {
   static const String _languageKey = 'selected_language';
   static const String _firstLaunchKey = 'first_launch_completed';
   
-  String _currentLanguage = 'en';
+  String _currentLanguage = 'hi';
   bool _isFirstLaunch = true;
   final GoogleTranslationService _translationService = GoogleTranslationService();
 
@@ -44,7 +44,7 @@ class LanguageProvider extends ChangeNotifier {
       case 'ta':
         return const Locale('ta', 'IN');
       default:
-        return const Locale('en', 'US');
+        return const Locale('hi', 'IN');
     }
   }
 
@@ -57,7 +57,7 @@ class LanguageProvider extends ChangeNotifier {
   Future<void> _loadLanguagePreference() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      _currentLanguage = prefs.getString(_languageKey) ?? 'en';
+      _currentLanguage = prefs.getString(_languageKey) ?? 'hi';
       _isFirstLaunch = !(prefs.getBool(_firstLaunchKey) ?? false);
       notifyListeners();
     } catch (e) {

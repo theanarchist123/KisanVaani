@@ -83,27 +83,32 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
           children: [
             Icon(Icons.error, color: Colors.red),
             SizedBox(width: 8),
-            Text('Server Not Connected'),
+            Text('सर्वर कनेक्ट नहीं है(Server Not Connected)'),
           ],
         ),
         content: const Text(
-          'ML prediction server is not running. Please start the Flask server first:\n\n'
+          'ML भविष्यवाणी सर्वर नहीं चल रहा है। कृपया पहले Flask सर्वर शुरू करें:\n'
+          '1. flask_api फ़ोल्डर में जाएं\n'
+          '2. start_server.bat चलाएं\n'
+          '3. सर्वर शुरू होने का इंतज़ार करें\n'
+          '4. दोबारा कोशिश करें\n\n'
+          '(ML prediction server is not running. Please start the Flask server first:\n'
           '1. Navigate to flask_api folder\n'
           '2. Run start_server.bat\n'
           '3. Wait for server to start\n'
-          '4. Try again',
+          '4. Try again)',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: const Text('ठीक है (OK)'),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _checkServerConnection();
             },
-            child: const Text('Retry'),
+            child: const Text('दोबारा कोशिश करें (Retry)'),
           ),
         ],
       ),
@@ -171,7 +176,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Crop Yield Prediction'),
+        title: const Text('फसल उत्पादन भविष्यवाणी (Crop Yield Prediction)'),
         backgroundColor: Colors.green[600],
         foregroundColor: Colors.white,
         elevation: 0,
@@ -197,8 +202,8 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       const SizedBox(width: 8),
                       Text(
                         _serverConnected 
-                            ? 'ML Server Connected' 
-                            : 'ML Server Disconnected',
+                            ? 'ML सर्वर कनेक्टेड (ML Server Connected)' 
+                            : 'ML सर्वर डिस्कनेक्टेड (ML Server Disconnected)',
                         style: TextStyle(
                           color: _serverConnected ? Colors.green[800] : Colors.red[800],
                           fontWeight: FontWeight.bold,
@@ -208,7 +213,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       if (!_serverConnected)
                         TextButton(
                           onPressed: _checkServerConnection,
-                          child: const Text('Retry'),
+                          child: const Text('दोबारा कोशिश करें(Retry)'),
                         ),
                     ],
                   ),
@@ -224,7 +229,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Crop Information',
+                        'फसल की जानकारी (Crop Information)',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: Colors.green[700],
                           fontWeight: FontWeight.bold,
@@ -236,7 +241,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       DropdownButtonFormField<String>(
                         value: _selectedCrop,
                         decoration: const InputDecoration(
-                          labelText: 'Crop Type',
+                          labelText: 'फसल का प्रकार (Crop Type)',
                           prefixIcon: Icon(Icons.grass),
                         ),
                         items: _crops.map((crop) => DropdownMenuItem(
@@ -244,7 +249,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                           child: Text(crop),
                         )).toList(),
                         onChanged: (value) => setState(() => _selectedCrop = value!),
-                        validator: (value) => value == null ? 'Please select a crop' : null,
+                        validator: (value) => value == null ? 'कृपया फसल चुनें (Please select a crop)' : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -252,7 +257,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       DropdownButtonFormField<String>(
                         value: _selectedState,
                         decoration: const InputDecoration(
-                          labelText: 'State',
+                          labelText: 'राज्य (State)',
                           prefixIcon: Icon(Icons.location_on),
                         ),
                         items: _states.map((state) => DropdownMenuItem(
@@ -260,7 +265,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                           child: Text(state),
                         )).toList(),
                         onChanged: (value) => setState(() => _selectedState = value!),
-                        validator: (value) => value == null ? 'Please select a state' : null,
+                        validator: (value) => value == null ? 'कृपया राज्य चुनें (Please select a state)' : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -268,7 +273,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       DropdownButtonFormField<String>(
                         value: _selectedSoilType,
                         decoration: const InputDecoration(
-                          labelText: 'Soil Type',
+                          labelText: 'मिट्टी का प्रकार (Soil Type)',
                           prefixIcon: Icon(Icons.terrain),
                         ),
                         items: _soilTypes.map((soil) => DropdownMenuItem(
@@ -276,7 +281,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                           child: Text(soil),
                         )).toList(),
                         onChanged: (value) => setState(() => _selectedSoilType = value!),
-                        validator: (value) => value == null ? 'Please select soil type' : null,
+                        validator: (value) => value == null ? 'कृपया मिट्टी का प्रकार चुनें (Please select soil type)' : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -284,7 +289,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       DropdownButtonFormField<String>(
                         value: _selectedSeason,
                         decoration: const InputDecoration(
-                          labelText: 'Growing Season',
+                          labelText: 'बुआई का मौसम (Growing Season)',
                           prefixIcon: Icon(Icons.wb_sunny),
                         ),
                         items: _seasons.map((season) => DropdownMenuItem(
@@ -292,7 +297,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                           child: Text(season),
                         )).toList(),
                         onChanged: (value) => setState(() => _selectedSeason = value!),
-                        validator: (value) => value == null ? 'Please select season' : null,
+                        validator: (value) => value == null ? 'कृपया मौसम चुनें (Please select season)' : null,
                       ),
                     ],
                   ),
@@ -308,7 +313,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Environmental Conditions',
+                        'पर्यावरणीय परिस्थितियां (Environmental Conditions)',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: Colors.blue[700],
                           fontWeight: FontWeight.bold,
@@ -320,17 +325,17 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       TextFormField(
                         controller: _rainfallController,
                         decoration: const InputDecoration(
-                          labelText: 'Rainfall (mm) *',
+                          labelText: 'वर्षा (Rainfall) *',
                           prefixIcon: Icon(Icons.water_drop),
                           suffixText: 'mm',
                         ),
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter rainfall amount';
+                            return 'कृपया वर्षा की मात्रा दर्ज करें (Please enter rainfall amount)';
                           }
                           if (double.tryParse(value) == null) {
-                            return 'Please enter a valid number';
+                            return 'कृपया एक वैध संख्या दर्ज करें (Please enter a valid number)';
                           }
                           return null;
                         },
@@ -340,17 +345,17 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       TextFormField(
                         controller: _temperatureController,
                         decoration: const InputDecoration(
-                          labelText: 'Temperature (°C) *',
+                          labelText: 'तापमान (Temperature) *',
                           prefixIcon: Icon(Icons.thermostat),
                           suffixText: '°C',
                         ),
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter temperature';
+                            return 'कृपया तापमान दर्ज करें (Please enter temperature)';
                           }
                           if (double.tryParse(value) == null) {
-                            return 'Please enter a valid number';
+                            return 'कृपया एक वैध संख्या दर्ज करें (Please enter a valid number)';
                           }
                           return null;
                         },
@@ -360,17 +365,17 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       TextFormField(
                         controller: _landSizeController,
                         decoration: const InputDecoration(
-                          labelText: 'Land Size (hectares) *',
+                          labelText: 'जमीन का आकार (Land Size) *',
                           prefixIcon: Icon(Icons.landscape),
                           suffixText: 'ha',
                         ),
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter land size';
+                            return 'कृपया जमीन का आकार दर्ज करें (Please enter land size)';
                           }
                           if (double.tryParse(value) == null) {
-                            return 'Please enter a valid number';
+                            return 'कृपया एक वैध संख्या दर्ज करें (Please enter a valid number)';
                           }
                           return null;
                         },
@@ -385,13 +390,13 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
               Card(
                 child: ExpansionTile(
                   title: Text(
-                    'Optional Parameters',
+                    'वैकल्पिक पैरामीटर (Optional Parameters)',
                     style: TextStyle(
                       color: Colors.orange[700],
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  subtitle: const Text('Add more details for better accuracy'),
+                  subtitle: const Text('बेहतर सटीकता के लिए अधिक विवरण जोड़ें (Add more details for better accuracy)'),
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16),
@@ -400,7 +405,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                           TextFormField(
                             controller: _humidityController,
                             decoration: const InputDecoration(
-                              labelText: 'Humidity (%)',
+                              labelText: 'नमी (Humidity)',
                               prefixIcon: Icon(Icons.opacity),
                               suffixText: '%',
                             ),
@@ -411,7 +416,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                           TextFormField(
                             controller: _phController,
                             decoration: const InputDecoration(
-                              labelText: 'Soil pH',
+                              labelText: 'मिट्टी पीएच (Soil pH)',
                               prefixIcon: Icon(Icons.science),
                               hintText: '6.0 - 8.0',
                             ),
@@ -422,7 +427,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                           TextFormField(
                             controller: _nitrogenController,
                             decoration: const InputDecoration(
-                              labelText: 'Nitrogen Content (kg/ha)',
+                              labelText: 'नाइट्रोजन (Nitrogen)',
                               prefixIcon: Icon(Icons.eco),
                               suffixText: 'kg/ha',
                             ),
@@ -433,7 +438,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                           TextFormField(
                             controller: _phosphorusController,
                             decoration: const InputDecoration(
-                              labelText: 'Phosphorus Content (kg/ha)',
+                              labelText: 'फॉस्फोरस (Phosphorus)',
                               prefixIcon: Icon(Icons.eco),
                               suffixText: 'kg/ha',
                             ),
@@ -444,7 +449,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                           TextFormField(
                             controller: _potassiumController,
                             decoration: const InputDecoration(
-                              labelText: 'Potassium Content (kg/ha)',
+                              labelText: 'पोटैशियम (Potassium)',
                               prefixIcon: Icon(Icons.eco),
                               suffixText: 'kg/ha',
                             ),
@@ -468,7 +473,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.psychology),
-                label: Text(_isLoading ? 'Predicting...' : 'Predict Yield'),
+                label: Text(_isLoading ? 'भविष्यवाणी हो रही है...(Predicting)' : 'उत्पादन की भविष्यवाणी करें (Predict Yield)'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green[600],
                   foregroundColor: Colors.white,
@@ -506,7 +511,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                 Icon(Icons.trending_up, color: Colors.green[700], size: 32),
                 const SizedBox(width: 12),
                 Text(
-                  'Yield Prediction',
+                  'उत्पादन भविष्यवाणी (Yield Prediction)',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: Colors.green[700],
                     fontWeight: FontWeight.bold,
@@ -531,7 +536,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Predicted Yield',
+                          'अनुमानित उत्पादन(Predicted Yield)',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[600],
@@ -556,7 +561,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '${(result.confidence * 100).toInt()}% Confidence',
+                      '${(result.confidence * 100).toInt()}% विश्वसनीयता (${(result.confidence * 100).toInt()}% Confidence)',
                       style: TextStyle(
                         color: Colors.green[700],
                         fontWeight: FontWeight.bold,
@@ -580,7 +585,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Model Information',
+                    'मॉडल जानकारी(Model Information)',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -591,7 +596,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Algorithm:', style: TextStyle(color: Colors.grey[600])),
+                      Text('एल्गोरिदम:(Algorithm):', style: TextStyle(color: Colors.grey[600])),
                       Text(
                         result.modelName,
                         style: const TextStyle(fontWeight: FontWeight.bold),
@@ -602,7 +607,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Accuracy (R²):', style: TextStyle(color: Colors.grey[600])),
+                      Text('सटीकता (R²):(Accuracy (R²)):', style: TextStyle(color: Colors.grey[600])),
                       Text(
                         '${(result.r2Score * 100).toStringAsFixed(1)}%',
                         style: const TextStyle(fontWeight: FontWeight.bold),
@@ -613,7 +618,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Average Error:', style: TextStyle(color: Colors.grey[600])),
+                      Text('औसत त्रुटि:(Average Error):', style: TextStyle(color: Colors.grey[600])),
                       Text(
                         '±${result.mae.toStringAsFixed(1)} ${result.unit}',
                         style: const TextStyle(fontWeight: FontWeight.bold),
@@ -636,7 +641,7 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       });
                     },
                     icon: const Icon(Icons.refresh),
-                    label: const Text('New Prediction'),
+                    label: const Text('नई भविष्यवाणी(New Prediction)'),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -646,12 +651,12 @@ class _YieldPredictionScreenState extends State<YieldPredictionScreen> {
                       // You can add functionality to save or share the result
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Prediction saved to your farm records'),
+                          content: Text('भविष्यवाणी आपके खेत के रिकॉर्ड में सहेज दी गई(Prediction saved to your farm records)'),
                         ),
                       );
                     },
                     icon: const Icon(Icons.save),
-                    label: const Text('Save Result'),
+                    label: const Text('परिणाम सहेजें(Save Result)'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[600],
                       foregroundColor: Colors.white,

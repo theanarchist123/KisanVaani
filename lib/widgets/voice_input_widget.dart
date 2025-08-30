@@ -71,7 +71,7 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            'Voice Assistant',
+            'आवाज़ सहायक',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,

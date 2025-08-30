@@ -65,7 +65,7 @@ class SubsidyTrackingScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Subsidy Tracking',
+                  'सब्सिडी ट्रैकिंग',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -73,7 +73,7 @@ class SubsidyTrackingScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Track your benefits and subsidies',
+                  'अपने लाभों और सब्सिडी पर नज़र रखेंअपने लाभों और सब्सिडी पर नज़र रखें',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.white,

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/farm_provider.dart';
 import '../providers/hybrid_translation_provider.dart';
 import '../utils/translation_utils.dart';
-import 'home_screen.dart';
+import './home_screen.dart';
 import 'farm_features_screen.dart';
 import 'knowledge_screen.dart';
 import 'community_screen.dart';

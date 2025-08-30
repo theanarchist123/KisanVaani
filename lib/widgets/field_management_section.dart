@@ -18,8 +18,8 @@ class _FieldManagementSectionState extends State<FieldManagementSection> {
         _buildManagementCard(
           0,
           '💧',
-          'Irrigation Schedule',
-          'Next irrigation: Tomorrow 6:00 AM',
+          'सिंचाई अनुसूची',
+          'अगली सिंचाई: कल सुबह 6:00 बजे',
           _buildIrrigationContent(),
         ),
         
@@ -28,8 +28,8 @@ class _FieldManagementSectionState extends State<FieldManagementSection> {
         _buildManagementCard(
           1,
           '🧪',
-          'Fertilizer & Manure',
-          'Time for NPK fertilizer',
+          'उर्वरक और खाद',
+          'NPK उर्वरक का समय',
           _buildFertilizerContent(),
         ),
         
@@ -38,8 +38,8 @@ class _FieldManagementSectionState extends State<FieldManagementSection> {
         _buildManagementCard(
           2,
           '🐛',
-          'Pest Control',
-          'Last spray: 5 days ago',
+          'कीट नियंत्रण',
+          'अंतिम छिड़काव: 5 दिन पहले',
           _buildPestControlContent(),
         ),
         
@@ -48,8 +48,8 @@ class _FieldManagementSectionState extends State<FieldManagementSection> {
         _buildManagementCard(
           3,
           '📅',
-          'Crop Calendar',
-          'This month\'s activities',
+          'फसल कैलेंडर',
+          'इस महीने की गतिविधियां',
           _buildHarvestCalendarContent(),
         ),
       ],
@@ -185,6 +185,65 @@ class _FieldManagementSectionState extends State<FieldManagementSection> {
         _buildScheduleItem('कल शाम 5:00', 'गेहूं - 3 एकड़', true),
         _buildScheduleItem('2 दिन बाद', 'प्याज - 0.5 एकड़', false),
         
+        const SizedBox(height: 16),
+        
+        // Sensor Section
+        const Divider(),
+        const SizedBox(height: 12),
+        
+        Row(
+          children: [
+            const Icon(Icons.sensors, color: AppTheme.primaryGreen, size: 20),
+            const SizedBox(width: 8),
+            const Text(
+              'सेंसर प्रबंधन (Sensor Management)',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.textDark,
+              ),
+            ),
+          ],
+        ),
+        
+        const SizedBox(height: 12),
+        
+        _buildSensorCard('मिट्टी नमी सेंसर', 'खेत 1', '65%', 'Connected'),
+        _buildSensorCard('तापमान सेंसर', 'खेत 2', '28°C', 'Connected'),
+        _buildSensorCard('pH सेंसर', 'खेत 1', '6.8', 'Offline'),
+        
+        const SizedBox(height: 16),
+        
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.add_circle, size: 18),
+                label: const Text('नया सेंसर जोड़ें'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[600],
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.settings, size: 18),
+                label: const Text('सेंसर सेटिंग'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.blue[600],
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ],
+        ),
+        
+        const SizedBox(height: 16),
+        const Divider(),
         const SizedBox(height: 16),
         
         Row(
@@ -521,6 +580,82 @@ class _FieldManagementSectionState extends State<FieldManagementSection> {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSensorCard(String sensorName, String location, String value, String status) {
+    Color statusColor = status == 'Connected' ? Colors.green : Colors.red;
+    IconData statusIcon = status == 'Connected' ? Icons.check_circle : Icons.error;
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppTheme.backgroundLight,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: statusColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: statusColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              Icons.sensors,
+              size: 20,
+              color: statusColor,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  sensorName,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '$location • $value',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                statusIcon,
+                size: 16,
+                color: statusColor,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                status,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: statusColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ],
       ),

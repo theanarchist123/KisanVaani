@@ -14,80 +14,80 @@ class CommunityScreen extends StatelessWidget {
         spacing: 16,
         children: [
           // Voice Forum Section
-          _buildSectionHeader('Voice Forum', Icons.record_voice_over),
+          _buildSectionHeader('आवाज़ मंच', Icons.record_voice_over),
           
           _buildVoiceForumCard(
             context,
-            'Rajesh Kumar',
-            'Tomato leaf curl virus problem, please suggest solutions?',
-            '2 hours ago',
+            'राजेश कुमार',
+            'टमाटर पत्ती कर्ल वायरस की समस्या, कृपया समाधान सुझाएं?',
+            '2 घंटे पहले',
             12,
           ),
           
           _buildVoiceForumCard(
             context,
-            'Sunita Devi',
-            'Need information about new wheat varieties.',
-            '5 hours ago',
+            'सुनीता देवी',
+            'गेहूं की नई किस्मों के बारे में जानकारी चाहिए।',
+            '5 घंटे पहले',
             8,
           ),
           
           // Q&A Section
-          _buildSectionHeader('Q&A', Icons.question_answer),
+          _buildSectionHeader('प्रश्न उत्तर', Icons.question_answer),
           
           _buildQACard(
             context,
-            'Q: Treatment for brown spot disease in rice?',
-            'A: Spray Propiconazole 25% EC...',
-            'Dr. Anil Sharma',
-            '1 day ago',
+            'प्रश्न: चावल में ब्राउन स्पॉट रोग का इलाज?',
+            'उत्तर: प्रोपिकोनाज़ोल 25% EC का छिड़काव करें...',
+            'डॉ. अनिल शर्मा',
+            '1 दिन पहले',
             true,
           ),
           
           _buildQACard(
             context,
-            'Q: How to make organic fertilizer?',
-            'A: Mix cow dung, dry leaves and kitchen waste...',
-            'Pramod Yadav',
-            '3 days ago',
+            'प्रश्न: जैविक खाद कैसे बनाएं?',
+            'उत्तर: गोबर, सूखे पत्ते और रसोई का कचरा मिलाएं...',
+            'प्रमोद यादव',
+            '3 दिन पहले',
             false,
           ),
           
           // Expert Advice
-          _buildSectionHeader('Expert Advice', Icons.person),
+          _buildSectionHeader('विशेषज्ञ सलाह', Icons.person),
           
           _buildExpertCard(
             context,
-            'Dr. Ram Prasad',
-            'Agricultural Expert',
-            'Crop disease and pest management',
+            'डॉ. राम प्रसाद',
+            'कृषि विशेषज्ञ',
+            'फसल रोग और कीट प्रबंधन',
             'online',
           ),
           
           _buildExpertCard(
             context,
-            'Prof. Sunita Agrawal',
-            'Soil Science Expert',
-            'Soil fertility and nutrition',
+            'प्रो. सुनीता अग्रवाल',
+            'मृदा विज्ञान विशेषज्ञ',
+            'मिट्टी की उर्वरता और पोषण',
             'offline',
           ),
           
           // Local Groups
-          _buildSectionHeader('Local Groups', Icons.groups),
+          _buildSectionHeader('स्थानीय समूह', Icons.groups),
           
           _buildGroupCard(
             context,
-            'Sonipat Farmers Union',
-            '1,245 members',
-            'Community of farmers from Haryana',
+            'सोनीपत किसान संघ',
+            '1,245 सदस्य',
+            'हरियाणा के किसानों का समुदाय',
             true,
           ),
           
           _buildGroupCard(
             context,
-            'Organic Farming Group',
-            '892 members',
-            'For natural farming practices',
+            'जैविक खेती समूह',
+            '892 सदस्य',
+            'प्राकृतिक खेती प्रथाओं के लिए',
             false,
           ),
           

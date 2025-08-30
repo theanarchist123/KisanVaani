@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/government_scheme_provider.dart';
 import '../utils/app_theme.dart';
+import '../generated/app_localizations.dart';
 import 'dart:io';
 
 class DocumentManagerScreen extends StatelessWidget {
@@ -67,7 +68,7 @@ class DocumentManagerScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Document Manager',
+                  'दस्तावेज़ प्रबंधक\n(Document Manager)',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -75,7 +76,7 @@ class DocumentManagerScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Manage your application documents',
+                  'अपने आवेदन दस्तावेज़ों का प्रबंधन करें\n(Manage your application documents)',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.white,

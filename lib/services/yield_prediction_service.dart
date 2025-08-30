@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class YieldPredictionService {
-  static const String baseUrl = 'http://192.168.1.9:5000';
+  static const String baseUrl = 'http://127.0.0.1:5000';
   
   // Test if the ML API server is running
   static Future<bool> isServerRunning() async {

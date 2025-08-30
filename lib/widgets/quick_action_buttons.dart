@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/voice_assistant_provider.dart';
 import '../utils/app_theme.dart';
 import '../screens/yield_prediction_screen.dart';
+import '../screens/plant_disease_library_page.dart';
 
 class QuickActionButtons extends StatelessWidget {
   const QuickActionButtons({super.key});
@@ -18,9 +19,14 @@ class QuickActionButtons extends StatelessWidget {
               child: _buildActionButton(
                 context,
                 '📷',
-                'Photo Check',
-                'Take crop photo to diagnose problems',
-                () => _showCameraDiagnosis(context),
+                'फोटो जांच',
+                'फसल रोगों की जानकारी देखें',
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PlantDiseaseLibraryPage(),
+                  ),
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -28,8 +34,8 @@ class QuickActionButtons extends StatelessWidget {
               child: _buildActionButton(
                 context,
                 '💰',
-                'Add Expense',
-                'Record expenses with voice',
+                'खर्च जोड़ें',
+                'आवाज़ के साथ खर्च रिकॉर्ड करें',
                 () => _showExpenseDialog(context),
               ),
             ),
@@ -43,8 +49,8 @@ class QuickActionButtons extends StatelessWidget {
               child: _buildActionButton(
                 context,
                 '🌧️',
-                'Weather Alert',
-                'Check today and tomorrow weather',
+                'मौसम चेतावनी',
+                'आज और कल के मौसम की जांच करें',
                 () => _showWeatherDialog(context),
               ),
             ),
@@ -53,8 +59,8 @@ class QuickActionButtons extends StatelessWidget {
               child: _buildActionButton(
                 context,
                 '🤖',
-                'Yield Prediction',
-                'AI-powered crop yield forecast',
+                'उपज पूर्वानुमान',
+                'AI-संचालित फसल उपज पूर्वानुमान',
                 () => _showYieldPrediction(context),
               ),
             ),
@@ -128,139 +134,6 @@ class QuickActionButtons extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  void _showCameraDiagnosis(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.6,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(20),
-              child: Text(
-                'फोटो जांच',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: AppTheme.backgroundLight,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.grey[300]!,
-                          style: BorderStyle.solid,
-                          width: 2,
-                        ),
-                      ),
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.camera_alt,
-                            size: 64,
-                            color: AppTheme.primaryGreen,
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            'फसल की फोटो लें या गैलरी से चुनें',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: AppTheme.textDark,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () {},
-                            icon: const Icon(Icons.camera_alt),
-                            label: const Text('कैमरा'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.primaryGreen,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () {},
-                            icon: const Icon(Icons.photo_library),
-                            label: const Text('गैलरी'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppTheme.primaryGreen,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryGreen.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(
-                            Icons.info,
-                            color: AppTheme.primaryGreen,
-                            size: 20,
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              'फोटो लेते समय पत्तियों, फूलों या फलों को साफ़ रूप से दिखाएं',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppTheme.primaryGreen,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -463,7 +336,7 @@ class QuickActionButtons extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 16),
                             ),
                             child: const Text(
-                              'Save Expense',
+                              'खर्च सेव करें\n(Save Expense)',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -507,7 +380,7 @@ class QuickActionButtons extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.all(20),
               child: Text(
-                'Weather Alert',
+                'मौसम अलर्ट\n(Weather Alert)',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -546,7 +419,7 @@ class QuickActionButtons extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  'Sunny Weather',
+                                  'धूप मौसम\n(Sunny Weather)',
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.white70,
@@ -585,7 +458,7 @@ class QuickActionButtons extends StatelessWidget {
                           SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Weather is good. Perfect time for farm work.',
+                              'मौसम अच्छा है। खेती के काम के लिए सही समय।\n(Weather is good. Perfect time for farm work.)',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: AppTheme.textDark,

@@ -449,9 +449,9 @@ class GovernmentSchemeProvider extends ChangeNotifier {
         id: 'pm_kisan',
         name: 'PM-KISAN Samman Nidhi',
         nameHindi: 'पीएम-किसान सम्मान निधि',
-        description: 'Income support scheme providing ₹6,000 per year to farmers',
+        description: 'किसानों को प्रति वर्ष ₹6,000 की आय सहायता योजना',
         descriptionHindi: 'किसानों को प्रति वर्ष ₹6,000 की आय सहायता योजना',
-        category: 'Income Support',
+        category: 'आय सहायता',
         eligibilityCriteria: [
           'Small and marginal farmers',
           'Land ownership up to 2 hectares',

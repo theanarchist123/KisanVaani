@@ -51,13 +51,13 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
         });
       } else {
         setState(() {
-          _error = 'PDF file not found';
+          _error = 'PDF फ़ाइल नहीं मिली\n(PDF file not found)';
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Error loading PDF: $e';
+        _error = 'PDF लोड करने में त्रुटि: $e\n(Error loading PDF: $e)';
         _isLoading = false;
       });
     }
@@ -101,7 +101,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
             ),
             SizedBox(height: 16),
             Text(
-              'Loading PDF...',
+              'PDF लोड हो रहा है...\n(Loading PDF...)',
               style: TextStyle(
                 fontSize: 16,
                 color: AppTheme.textDark,
@@ -142,7 +142,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              _error ?? 'Unknown error occurred',
+              _error ?? 'अज्ञात त्रुटि हुई\n(Unknown error occurred)',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -153,7 +153,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
             ElevatedButton.icon(
               onPressed: _loadPdfInfo,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: const Text('पुनः प्रयास'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryGreen,
                 foregroundColor: Colors.white,
@@ -390,7 +390,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: const Text('रद्द करें'),
               ),
             ],
           ),

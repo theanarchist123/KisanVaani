@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/main_screen.dart';
-import 'screens/language_startup_screen.dart';
+import 'screens/language_settings_screen.dart';
 import 'providers/farm_provider.dart';
 import 'providers/voice_assistant_provider.dart';
 import 'providers/weather_provider.dart';
@@ -61,9 +61,9 @@ class KisanVaaniApp extends StatelessWidget {
             locale: languageProvider.currentLocale,
             routes: {
               '/main': (context) => const MainScreen(),
-              '/language-startup': (context) => const LanguageStartupScreen(),
+              '/language-settings': (context) => const LanguageSettingsScreen(),
             },
-            home: const LanguageStartupScreen(),
+            home: const MainScreen(),
           );
         },
       ),

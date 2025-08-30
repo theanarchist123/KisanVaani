@@ -81,15 +81,15 @@ class _FarmFeaturesScreenState extends State<FarmFeaturesScreen>
                         const QuickActionButtons(),
                         
                         // My Crops Section
-                        _buildSectionHeader('My Crops', Icons.agriculture),
+                        _buildSectionHeader('मेरी फसलें', Icons.agriculture),
                         const CropsGrid(),
                         
                         // Farm Analytics Dashboard
-                        _buildSectionHeader('Farm Analytics', Icons.analytics),
+                        _buildSectionHeader('खेत विश्लेषण', Icons.analytics),
                         const FarmAnalyticsDashboard(),
                         
                         // Field Management Section
-                        _buildSectionHeader('Field Management', Icons.settings),
+                        _buildSectionHeader('क्षेत्र प्रबंधन', Icons.settings),
                         const FieldManagementSection(),
                         
                         const SizedBox(height: 80), // Space for FAB
