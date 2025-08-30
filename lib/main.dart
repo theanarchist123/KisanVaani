@@ -4,6 +4,8 @@ import 'screens/main_screen.dart';
 import 'screens/language_startup_screen.dart';
 import 'providers/farm_provider.dart';
 import 'providers/voice_assistant_provider.dart';
+import 'providers/vapi_provider.dart';
+import 'providers/enhanced_voice_provider.dart';
 import 'providers/weather_provider.dart';
 import 'providers/government_scheme_provider.dart';
 import 'providers/hybrid_translation_provider.dart';
@@ -44,6 +46,8 @@ class KisanVaaniApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (_) => FarmProvider()),
         ChangeNotifierProvider(create: (_) => VoiceAssistantProvider()),
+        ChangeNotifierProvider(create: (_) => VapiProvider()),
+        ChangeNotifierProvider(create: (_) => EnhancedVoiceProvider()),
         ChangeNotifierProvider(create: (_) => WeatherProvider()),
         ChangeNotifierProvider(create: (_) => GovernmentSchemeProvider()),
         ChangeNotifierProvider(create: (_) => KnowledgeProvider()),
@@ -63,7 +67,7 @@ class KisanVaaniApp extends StatelessWidget {
               '/main': (context) => const MainScreen(),
               '/language-startup': (context) => const LanguageStartupScreen(),
             },
-            home: const LanguageStartupScreen(),
+            home: const MainScreen(),
           );
         },
       ),

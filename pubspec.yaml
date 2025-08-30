@@ -19,6 +19,13 @@ dependencies:
   speech_to_text: ^7.0.0
   flutter_tts: ^4.0.0
   
+  # AI & Audio
+  audioplayers: ^6.0.0
+  google_generative_ai: ^0.4.3
+  
+  # Vapi API Integration
+  web_socket_channel: ^2.4.0
+  
   # Networking & Data
   http: ^1.1.0
   shared_preferences: ^2.2.2
@@ -88,5 +95,6 @@ flutter:
     - family: NotoSansDevanagari
       fonts:
         - asset: fonts/NotoSansDevanagari-Regular.ttf
+          weight: 400
         - asset: fonts/NotoSansDevanagari-Bold.ttf
           weight: 700

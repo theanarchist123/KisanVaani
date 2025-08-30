@@ -237,6 +237,12 @@ abstract class AppLocalizations {
   /// **'Talk to me'**
   String get talkToMe;
 
+  /// No description provided for @voiceCommands.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice Commands'**
+  String get voiceCommands;
+
   /// No description provided for @youCanSay.
   ///
   /// In en, this message translates to:

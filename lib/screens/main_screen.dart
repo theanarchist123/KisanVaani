@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/farm_provider.dart';
 import '../providers/hybrid_translation_provider.dart';
+import '../providers/voice_assistant_provider.dart';
 import '../utils/translation_utils.dart';
 import 'home_screen.dart';
 import 'farm_features_screen.dart';
@@ -9,6 +10,7 @@ import 'knowledge_screen.dart';
 import 'community_screen.dart';
 import 'government_schemes_screen.dart';
 import 'profile_screen.dart';
+import 'simple_vapi_page.dart';
 import '../widgets/voice_assistant_fab.dart';
 import '../utils/app_theme.dart';
 
@@ -90,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
                       child: Row(
                         children: [
                           if (provider.currentLanguage == entry.key)
-                            Icon(
+                            const Icon(
                               Icons.check,
                               color: AppTheme.primaryGreen,
                               size: 18,
@@ -105,6 +107,23 @@ class _MainScreenState extends State<MainScreen> {
                 },
               );
             },
+          ),
+          // Vapi Voice Assistant Button
+          IconButton(
+            icon: const Icon(Icons.mic, size: 28),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SimpleVapiPage(),
+              ),
+            ),
+            tooltip: 'Voice Assistant (Vapi)',
+          ),
+          // AI Voice Test Button
+          IconButton(
+            icon: const Icon(Icons.psychology_outlined, size: 28),
+            onPressed: () => _testAIVoice(context),
+            tooltip: 'Test AI Voice Assistant',
           ),
           IconButton(
             icon: const Icon(Icons.notifications_outlined, size: 28),
@@ -324,5 +343,54 @@ class _MainScreenState extends State<MainScreen> {
       // Fallback to key if translation fails
       return key;
     }
+  }
+
+  /// Test method for AI Voice Assistant
+  void _testAIVoice(BuildContext context) async {
+    final voiceProvider = context.read<VoiceAssistantProvider>();
+    
+    // Show test options dialog
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('AI Voice Assistant Test'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Choose a test query:'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                voiceProvider.processTextQuery('आज का मौसम कैसा है?');
+              },
+              child: const Text('Weather Query'),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                voiceProvider.processTextQuery('खेती के लिए कौन सी योजना है?');
+              },
+              child: const Text('Scheme Query'),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                voiceProvider.processTextQuery('धान की खेती कैसे करें?');
+              },
+              child: const Text('Farming Query'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
   }
 }

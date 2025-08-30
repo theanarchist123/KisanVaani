@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:audioplayers/audioplayers.dart';
 import '../services/elevenlabs_service.dart';
 import '../services/ai_assistant_service.dart';
 
 class VoiceAssistantProvider extends ChangeNotifier {
   final SpeechToText _speechToText = SpeechToText();
   final FlutterTts _flutterTts = FlutterTts();
-  final AudioPlayer _audioPlayer = AudioPlayer();
   final ElevenLabsService _elevenLabsService = ElevenLabsService();
   final AIAssistantService _aiAssistantService = AIAssistantService();
   
@@ -53,9 +51,9 @@ class VoiceAssistantProvider extends ChangeNotifier {
 
   Future<void> _initializeTts() async {
     await _flutterTts.setLanguage('hi-IN');
-    await _flutterTts.setPitch(1.0);
     await _flutterTts.setSpeechRate(0.5);
     await _flutterTts.setVolume(1.0);
+    await _flutterTts.setPitch(1.0);
 
     _flutterTts.setStartHandler(() {
       _isSpeaking = true;
@@ -68,159 +66,135 @@ class VoiceAssistantProvider extends ChangeNotifier {
     });
 
     _flutterTts.setErrorHandler((msg) {
-      print('TTS Error: $msg');
       _isSpeaking = false;
       notifyListeners();
     });
   }
 
   Future<void> startListening() async {
-    if (!_isAvailable || _isListening) return;
+    if (!_isAvailable) {
+      await _initializeSpeech();
+    }
 
-    try {
+    if (_isAvailable && !_isListening) {
+      _isListening = true;
+      _lastWords = '';
+      notifyListeners();
+
       await _speechToText.listen(
-        onResult: (result) {
+        onResult: (result) async {
           _lastWords = result.recognizedWords;
-          _confidence = result.confidence.toString();
-          
-          print('Speech recognized: "${_lastWords}" (confidence: ${_confidence})');
+          _confidence = result.hasConfidenceRating 
+            ? (result.confidence * 100).toStringAsFixed(1)
+            : '';
           notifyListeners();
-
-          if (result.finalResult && _lastWords.trim().isNotEmpty) {
-            print('Final result received, processing query...');
-            _processVoiceQuery(_lastWords);
+          
+          // Process the query when listening is complete
+          if (result.finalResult && _lastWords.isNotEmpty) {
+            await _processVoiceQuery(_lastWords);
           }
         },
+        localeId: 'hi-IN',
         listenFor: const Duration(seconds: 30),
         pauseFor: const Duration(seconds: 3),
-        partialResults: true,
-        localeId: 'hi_IN', // Hindi locale
-        cancelOnError: true,
-        listenMode: ListenMode.confirmation,
       );
-
-      _isListening = true;
-      notifyListeners();
-    } catch (e) {
-      print('Error starting listening: $e');
-      _isListening = false;
-      notifyListeners();
     }
   }
 
+  /// Process voice query using AI assistant and respond with ElevenLabs
   Future<void> _processVoiceQuery(String query) async {
-    if (query.isEmpty) return;
-
     try {
       _isProcessing = true;
       notifyListeners();
-
-      print('Processing voice query: $query');
-
-      // Get AI response
-      final aiResponse = await _aiAssistantService.processQuery(query);
-      _lastResponse = aiResponse;
       
-      print('AI Response received: ${aiResponse.substring(0, aiResponse.length > 100 ? 100 : aiResponse.length)}...');
-
-      // Try to use ElevenLabs for voice synthesis
-      final success = await _elevenLabsService.speakText(aiResponse);
+      print('Processing voice query: $query');
+      
+      // Get AI response
+      final response = await _aiAssistantService.processQuery(query);
+      _lastResponse = response;
+      notifyListeners();
+      
+      // Speak response using ElevenLabs
+      _isSpeaking = true;
+      notifyListeners();
+      
+      final success = await _elevenLabsService.speakText(response);
       
       if (!success) {
-        // Fallback to system TTS
-        await _flutterTts.speak(aiResponse);
-        print('Using system TTS as fallback');
+        // Fallback to Flutter TTS if ElevenLabs fails
+        print('ElevenLabs failed, using Flutter TTS as fallback');
+        await _flutterTts.speak(response);
       }
-
-      _isProcessing = false;
-      notifyListeners();
+      
     } catch (e) {
       print('Error processing voice query: $e');
+      _lastResponse = 'माफ करें, कुछ समस्या हुई है। कृपया दोबारा कोशिश करें।';
+      await _flutterTts.speak(_lastResponse);
+    } finally {
       _isProcessing = false;
+      _isSpeaking = false;
       notifyListeners();
-      
-      // Fallback error message
-      await _flutterTts.speak('माफ़ करें, मैं आपकी मदद नहीं कर सका।');
     }
   }
 
   Future<void> stopListening() async {
-    try {
-      await _speechToText.stop();
+    if (_isListening) {
       _isListening = false;
+      await _speechToText.stop();
       notifyListeners();
-    } catch (e) {
-      print('Error stopping speech: $e');
     }
   }
 
   Future<void> speak(String text) async {
-    try {
-      _isSpeaking = true;
-      notifyListeners();
-
-      // Try ElevenLabs first
-      final success = await _elevenLabsService.speakText(text);
-      
-      if (!success) {
-        // Fallback to system TTS
+    if (text.isNotEmpty) {
+      try {
+        _isSpeaking = true;
+        notifyListeners();
+        
+        // Try ElevenLabs first
+        final success = await _elevenLabsService.speakText(text);
+        
+        if (!success) {
+          // Fallback to Flutter TTS
+          await _flutterTts.speak(text);
+        }
+      } catch (e) {
+        print('Error in speak method: $e');
         await _flutterTts.speak(text);
+      } finally {
+        _isSpeaking = false;
+        notifyListeners();
       }
-    } catch (e) {
-      print('Error speaking: $e');
-      // Always try system TTS as ultimate fallback
-      await _flutterTts.speak(text);
-    } finally {
-      _isSpeaking = false;
-      notifyListeners();
     }
   }
 
+  /// Process text query manually (for typed input)
   Future<void> processTextQuery(String query) async {
-    if (query.isEmpty) return;
-
-    try {
-      _isProcessing = true;
-      _lastWords = query;
-      notifyListeners();
-
-      // Get AI response
-      final aiResponse = await _aiAssistantService.processQuery(query);
-      _lastResponse = aiResponse;
-
-      // Speak the response
-      await speak(aiResponse);
-
-      _isProcessing = false;
-      notifyListeners();
-    } catch (e) {
-      print('Error processing text query: $e');
-      _isProcessing = false;
-      notifyListeners();
-    }
+    if (query.trim().isEmpty) return;
+    
+    _lastWords = query;
+    notifyListeners();
+    
+    await _processVoiceQuery(query);
   }
 
+  /// Stop current speech
   Future<void> stopSpeaking() async {
     try {
+      await _elevenLabsService.stopSpeaking();
       await _flutterTts.stop();
-      await _audioPlayer.stop();
       _isSpeaking = false;
       notifyListeners();
     } catch (e) {
       print('Error stopping speech: $e');
     }
-  }
-
-  String processVoiceCommand(String command) {
-    // Legacy method for compatibility
-    return 'आपका सवाल: $command';
   }
 
   @override
   void dispose() {
     _speechToText.cancel();
     _flutterTts.stop();
-    _audioPlayer.dispose();
+    _elevenLabsService.dispose();
     super.dispose();
   }
 }

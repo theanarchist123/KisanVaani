@@ -76,6 +76,9 @@ class AppLocalizationsTa extends AppLocalizations {
   String get talkToMe => 'என்னிடம் பேசுங்கள்';
 
   @override
+  String get voiceCommands => 'Voice Commands';
+
+  @override
   String get youCanSay => 'நீங்கள் சொல்லலாம்:';
 
   @override

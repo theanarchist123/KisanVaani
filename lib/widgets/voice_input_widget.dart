@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/government_scheme_provider.dart';
+import '../providers/voice_assistant_provider.dart';
 import '../utils/app_theme.dart';
 
 class VoiceInputWidget extends StatefulWidget {
@@ -366,8 +367,10 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget>
   }
 
   void _useSuggestion(String suggestion) {
-    final provider = context.read<GovernmentSchemeProvider>();
-    // Simulate voice input with the suggestion
+    final voiceProvider = context.read<VoiceAssistantProvider>();
+    // Process the suggestion with AI assistant
+    voiceProvider.processTextQuery(suggestion);
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Processing: $suggestion'),
