@@ -76,6 +76,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get talkToMe => 'मुझसे बात करें';
 
   @override
+  String get voiceCommands => 'Voice Commands';
+
+  @override
   String get youCanSay => 'आप कह सकते हैं:';
 
   @override

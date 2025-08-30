@@ -26,6 +26,7 @@
   "weatherInfo": "Weather Info",
   "listening": "Listening...",
   "talkToMe": "Talk to me",
+  "voiceCommands": "Voice Commands",
   "youCanSay": "You can say:",
   "addExpenseExample": "\"I bought medicine for 500 rupees\"",
   "checkCropsExample": "\"How are my tomatoes?\"",

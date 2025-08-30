@@ -5,6 +5,7 @@ import '../providers/knowledge_provider.dart';
 import '../models/knowledge_models.dart';
 import '../widgets/pdf_viewer.dart';
 import 'article_detail_screen.dart';
+import 'category_detail_screen.dart';
 
 class KnowledgeScreen extends StatefulWidget {
   const KnowledgeScreen({super.key});
@@ -29,6 +30,15 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _navigateToCategory(KnowledgeCategory category) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CategoryDetailScreen(category: category),
+      ),
+    );
   }
 
   @override
@@ -169,48 +179,46 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
   }
 
   Widget _buildCategoriesSection() {
-    final categories = [
-      {'emoji': '🌱', 'title': 'Crop Science', 'count': '25 topics'},
-      {'emoji': '🚜', 'title': 'Farm Equipment', 'count': '15 topics'},
-      {'emoji': '🐛', 'title': 'Pest Management', 'count': '20 topics'},
-      {'emoji': '💧', 'title': 'Irrigation', 'count': '18 topics'},
-      {'emoji': '🌿', 'title': 'Organic Farming', 'count': '12 topics'},
-      {'emoji': '💰', 'title': 'Market Trends', 'count': '10 topics'},
-    ];
-
-    List<Map<String, String>> filteredCategories = categories;
-    
-    if (_searchQuery.isNotEmpty) {
-      filteredCategories = categories.where((category) =>
-        category['title']!.toLowerCase().contains(_searchQuery.toLowerCase())
-      ).toList();
-    }
-
-    return Column(
-      children: [
-        _buildSectionHeader('Knowledge Categories', Icons.category,
-          subtitle: 'Explore farming topics'),
-        const SizedBox(height: 12),
+    return Consumer<KnowledgeProvider>(
+      builder: (context, provider, child) {
+        final categories = provider.getKnowledgeCategories();
         
-        if (filteredCategories.isEmpty)
-          _buildEmptySearch('No categories found')
-        else
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 1.2,
-            children: filteredCategories.map((category) =>
-              _buildCategoryCard(
-                category['emoji']!,
-                category['title']!,
-                category['count']!,
-              )
-            ).toList(),
-          ),
-      ],
+        List<KnowledgeCategory> filteredCategories = categories;
+        
+        if (_searchQuery.isNotEmpty) {
+          filteredCategories = categories.where((category) =>
+            category.title.toLowerCase().contains(_searchQuery.toLowerCase())
+          ).toList();
+        }
+
+        return Column(
+          children: [
+            _buildSectionHeader('Knowledge Categories', Icons.category,
+              subtitle: 'Explore farming topics'),
+            const SizedBox(height: 12),
+            
+            if (filteredCategories.isEmpty)
+              _buildEmptySearch('No categories found')
+            else
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 1.2,
+                children: filteredCategories.map((category) =>
+                  _buildCategoryCard(
+                    category.emoji,
+                    category.title,
+                    category.resourceCountText,
+                    onTap: () => _navigateToCategory(category),
+                  )
+                ).toList(),
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -459,7 +467,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
     );
   }
 
-  Widget _buildCategoryCard(String emoji, String title, String count) {
+  Widget _buildCategoryCard(String emoji, String title, String count, {VoidCallback? onTap}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -474,7 +482,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
         ],
       ),
       child: InkWell(
-        onTap: () => _openCategory(title),
+        onTap: onTap ?? () => _openCategory(title),
         borderRadius: BorderRadius.circular(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

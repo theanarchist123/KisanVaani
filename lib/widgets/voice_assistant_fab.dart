@@ -162,8 +162,8 @@ class _VoiceAssistantFABState extends State<VoiceAssistantFAB>
                       if (voiceProvider.isListening) {
                         await voiceProvider.stopListening();
                         if (voiceProvider.lastWords.isNotEmpty) {
-                          final response = voiceProvider.processVoiceCommand(voiceProvider.lastWords);
-                          await voiceProvider.speak(response);
+                          // Process with AI assistant and get ElevenLabs voice response
+                          await voiceProvider.processTextQuery(voiceProvider.lastWords);
                         }
                       } else {
                         await voiceProvider.startListening();

@@ -81,7 +81,7 @@ class LayoutHelpers {
     );
   }
 
-  /// Creates a responsive row that wraps to Wrap when screen is too small
+  /// Creates a Row with responsive behavior
   static Widget responsiveRow({
     required List<Widget> children,
     MainAxisAlignment? mainAxisAlignment,

@@ -8,6 +8,7 @@ class OfflinePack {
   final String fileName;
   final int sizeBytes;
   final String category;
+  final String language; // 'en', 'hi', 'gu', 'ta'
   final DateTime publishedDate;
   
   // Local state
@@ -24,6 +25,7 @@ class OfflinePack {
     required this.fileName,
     required this.sizeBytes,
     required this.category,
+    required this.language,
     required this.publishedDate,
     this.status = OfflinePackStatus.notDownloaded,
     this.localPath,
@@ -40,6 +42,7 @@ class OfflinePack {
       fileName: json['fileName'] as String,
       sizeBytes: json['sizeBytes'] as int,
       category: json['category'] as String,
+      language: json['language'] as String? ?? 'en',
       publishedDate: DateTime.parse(json['publishedDate'] as String),
       status: OfflinePackStatus.values[json['status'] as int? ?? 0],
       localPath: json['localPath'] as String?,
@@ -59,6 +62,7 @@ class OfflinePack {
       'fileName': fileName,
       'sizeBytes': sizeBytes,
       'category': category,
+      'language': language,
       'publishedDate': publishedDate.toIso8601String(),
       'status': status.index,
       'localPath': localPath,
@@ -162,40 +166,48 @@ class Article {
 
 class KnowledgeCategory {
   final String id;
-  final String name;
+  final String title;
+  final String emoji;
   final String description;
-  final String icon;
-  final int articleCount;
-  final int packCount;
+  final List<OfflinePack> resources;
+  final List<String> supportedLanguages;
 
   KnowledgeCategory({
     required this.id,
-    required this.name,
+    required this.title,
+    required this.emoji,
     required this.description,
-    required this.icon,
-    required this.articleCount,
-    required this.packCount,
+    required this.resources,
+    required this.supportedLanguages,
   });
+
+  int get resourceCount => resources.length;
+  
+  String get resourceCountText => '$resourceCount resource${resourceCount != 1 ? 's' : ''}';
 
   factory KnowledgeCategory.fromJson(Map<String, dynamic> json) {
     return KnowledgeCategory(
       id: json['id'] as String,
-      name: json['name'] as String,
+      title: json['title'] as String,
+      emoji: json['emoji'] as String,
       description: json['description'] as String,
-      icon: json['icon'] as String,
-      articleCount: json['articleCount'] as int,
-      packCount: json['packCount'] as int,
+      resources: (json['resources'] as List<dynamic>?)
+          ?.map((e) => OfflinePack.fromJson(e as Map<String, dynamic>))
+          .toList() ?? [],
+      supportedLanguages: (json['supportedLanguages'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ?? [],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
+      'title': title,
+      'emoji': emoji,
       'description': description,
-      'icon': icon,
-      'articleCount': articleCount,
-      'packCount': packCount,
+      'resources': resources.map((e) => e.toJson()).toList(),
+      'supportedLanguages': supportedLanguages,
     };
   }
 }
